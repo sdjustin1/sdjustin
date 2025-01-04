@@ -5,7 +5,7 @@
 	    <title>sdjustin.com</title>
 	</head>
 
-	<body bgcolor="blue">
+	<body bgcolor="purple">
 		<h2 align=center>Coming Soon!</h1>
 		<div align=center>#now()#</div>
 
