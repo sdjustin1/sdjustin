@@ -23,9 +23,9 @@ cd fuseless
 # -------------------- break point #2
 cd ..
 
-git clone https://github.com/sdjustin1/sdjustin2.git
+git clone https://github.com/sdjustin1/sdjustin.git
 # -------------------- break point #3
-cd sdjustin2
+cd sdjustin
 
 ./init.sh
 # -------------------- break point #4
