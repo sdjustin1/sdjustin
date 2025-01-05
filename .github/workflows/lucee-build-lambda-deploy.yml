@@ -1,4 +1,4 @@
-name: ll-build-and-deploy
+name: lucee-build-lambda-deploy
 
 on:
   push:
