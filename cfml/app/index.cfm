@@ -10,8 +10,6 @@
 		<div align=center>#now()#</div>
 
 		<div style="text-align: center;">
-			<!--- <img src="../../images/6.jpg" alt="It is the size of the fight in the dog"> --->
-			<!--- <img src="/sdjustin2/images/6.jpg" alt="It is the size of the fight in the dog"> --->
 			<img src="#application.imageprefix#6.jpg" alt="It is the size of the fight in the dog">
 		</div>
 	</body>
