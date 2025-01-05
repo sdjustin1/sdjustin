@@ -1,4 +1,4 @@
-name: Upload Website
+name: s3-push
 
 on:
   push:

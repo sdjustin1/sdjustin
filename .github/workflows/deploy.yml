@@ -1,5 +1,4 @@
-
-name: deploy
+name: ll-build-and-deploy
 
 on:
   push:
