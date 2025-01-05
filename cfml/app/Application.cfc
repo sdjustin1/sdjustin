@@ -33,7 +33,7 @@
 
             <cfset this.defaultDatasource = "pgjdbc">
 
-            <cfset application.imageprefix = "https://sdjustintestbucket.s3.us-east-2.amazonaws.com/cmedia/images">
+            <cfset application.imageprefix = "https://sdjustintestbucket.s3.us-east-2.amazonaws.com/cmedia/images/">
         <cfelse>
             <cfinclude template="includes/jlocalsecrets.cfm">
             <cfset application.imageprefix = "/sdjustin2/images/">
