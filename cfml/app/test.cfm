@@ -1,6 +1,6 @@
 <cfset local.myheaders = GetHttpRequestData()>
-<cfdump var="#local.myheaders#">
-
+<cfdump name="justin"  var="#local.myheaders#">
+<hr>
 <!-- ==start== dump {ts '2025-02-16 16:27:03'} format: html -->
 <div id="x3e" class="-lucee-dump"><script language="JavaScript" type="text/javascript">
 function dumpOC(name){var tds=document.all?document.getElementsByTagName('tr'):document.getElementsByName(name);var s=null;name=name;for(var i=0;i<tds.length;i++) {if(document.all && tds[i].name!=name)continue;s=tds[i].style;if(s.display=='none') s.display='';else s.display='none';}}
