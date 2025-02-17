@@ -1,5 +1,7 @@
 <cfset local.myheaders = GetHttpRequestData()>
-<cfdump name="justin"  var="#local.myheaders#">
+<cfdump label="justin" var="#local.myheaders#">
+<hr>
+<cfoutput>hey hey</cfoutput>
 <hr>
 <!-- ==start== dump {ts '2025-02-16 16:27:03'} format: html -->
 <div id="x3e" class="-lucee-dump"><script language="JavaScript" type="text/javascript">
