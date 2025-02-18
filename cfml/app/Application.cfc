@@ -36,7 +36,7 @@
             <cfset application.imageprefix = "https://sdjustintestbucket.s3.us-east-2.amazonaws.com/cmedia/images/">
         <cfelse>
             <cfinclude template="includes/jlocalsecrets.cfm">
-            <cfset application.imageprefix = "/sdjustin2/images/">
+            <cfset application.imageprefix = "../../cmedia/images/">
         </cfif>
     </cffunction>       
 
