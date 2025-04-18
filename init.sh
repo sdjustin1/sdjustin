@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ !$LUCEE_VERSION ]]; then
-	LUCEE_VERSION=5.4.5.23
+	LUCEE_VERSION=6.2.0.321
 fi
 
 if [[ !$FUSELESS_VERSION ]]; then

@@ -17,3 +17,4 @@
 <!--- <cfdump var="#application#">
 <cfdump var="#session#">
 <cfdump var="#cookie#"> --->
+<cfdump var="#server.lucee.version#">
