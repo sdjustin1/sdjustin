@@ -1,0 +1,1 @@
+<cffile action="write" output="jtesttext" createpath="true" file="s3://sdjustintestbucket/test.json"/>
