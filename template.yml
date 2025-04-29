@@ -4,7 +4,7 @@ Description: >
   sdjustin2
 Globals:
   Function:
-    Timeout: 20   
+    Timeout: 300   
 Resources:
   CFMLSelectFunction:
     Type: AWS::Serverless::Function
@@ -12,7 +12,7 @@ Resources:
       Handler: com.foundeo.fuseless.StreamLambdaHandler
       CodeUri: ./build/distributions/fuseless-template.zip
       Runtime: java11
-      Timeout: 20
+      Timeout: 300
       MemorySize: 3008
       Events:
         GetResource:
