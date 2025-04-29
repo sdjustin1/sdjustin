@@ -8,12 +8,12 @@ if [[ !$FUSELESS_VERSION ]]; then
 	FUSELESS_VERSION="0.2.0"
 fi
 
-if [ -f "jars/lucee-$LUCEE_VERSION.jar" ]; then
-	echo "lucee-$LUCEE_VERSION.jar already in jars folder, skipping download"
+if [ -f "jars/lucee-light-$LUCEE_VERSION.jar" ]; then
+	echo "lucee-light-$LUCEE_VERSION.jar already in jars folder, skipping download"
 else 
 	#download lucee jar
-	echo "Downloading lucee-$LUCEE_VERSION.jar"
-	curl --location -o jars/lucee-$LUCEE_VERSION.jar https://cdn.lucee.org/lucee-$LUCEE_VERSION.jar
+	echo "Downloading lucee-light-$LUCEE_VERSION.jar"
+	curl --location -o jars/lucee-light-$LUCEE_VERSION.jar https://cdn.lucee.org/lucee-light-$LUCEE_VERSION.jar
 fi
 
 
