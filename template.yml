@@ -13,7 +13,7 @@ Resources:
       CodeUri: ./build/distributions/fuseless-template.zip
       Runtime: java11
       Timeout: 60
-      MemorySize: 3096
+      MemorySize: 3008
       Events:
         GetResource:
           Type: Api
