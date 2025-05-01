@@ -5,7 +5,7 @@
 	    <title>sdjustin.com</title>
 	</head>
 
-	<body bgcolor="pink">
+	<body bgcolor="green">
 		<h2 align=center>Coming Soon!</h1>
 		<div align=center>#now()#</div>
 
@@ -13,8 +13,10 @@
 			<img src="#application.imageprefix#6.jpg" alt="It is the size of the fight in the dog">
 		</div>
 	</body>
-</html></cfoutput>
+</html>
+<p align=center>lucee #server.lucee.version#</p>
+</cfoutput>
+
 <!--- <cfdump var="#application#">
 <cfdump var="#session#">
 <cfdump var="#cookie#"> --->
-<cfdump var="#server.lucee.version#">
