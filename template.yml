@@ -4,7 +4,7 @@ Description: >
   sdjustin2
 Globals:
   Function:
-    Timeout: 300   
+    Timeout: 60   
 Resources:
   CFMLSelectFunction:
     Type: AWS::Serverless::Function
@@ -12,7 +12,7 @@ Resources:
       Handler: com.foundeo.fuseless.StreamLambdaHandler
       CodeUri: ./build/distributions/fuseless-template.zip
       Runtime: java11
-      Timeout: 300
+      Timeout: 60
       MemorySize: 3008
       Events:
         GetResource:
@@ -23,7 +23,7 @@ Resources:
       Environment:
         Variables:
           FELIX_CACHE_BUFSIZE: 16384
-          LUCEE_EXTENSIONS: 'B737ABC4-D43F-4D91-8E8E973E37C40D1B;name=cfimage;version=2.0.0.29,17AB52DE-B300-A94B-E058BD978511E39E;name=cfs3;version=2.0.2.21'
+          LUCEE_EXTENSIONS: 'B737ABC4-D43F-4D91-8E8E973E37C40D1B;name=cfimage;path=/var/task/extensions/image-extension-2.0.0.29.lex'
           DB_USERNAME: '{{resolve:ssm:/cfml/databaseusername:1}}'
           DB_PASSWORD: '{{resolve:ssm:/cfml/databasepassword:1}}'
           DB_CONNECTION_STRING: '{{resolve:ssm:/cfml/databaseconnectionstring:1}}'             
