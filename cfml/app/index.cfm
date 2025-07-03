@@ -5,7 +5,7 @@
 	    <title>sdjustin.com</title>
 	</head>
 
-	<body bgcolor="pink">
+	<body bgcolor="gray">
 		<h2 align=center>Coming Soon!</h1>
 		<div align=center>#now()#</div>
 
@@ -18,11 +18,36 @@
 			<p><strong>Checking AWS Metadata...</strong></p>
 			<cftry>
 				<!--- Check if we're in AWS Lambda first --->
-				<cfif structKeyExists(server, "AWS_LAMBDA_FUNCTION_NAME") or structKeyExists(cgi, "AWS_LAMBDA_FUNCTION_NAME")>
+				<cfset isLambda = false>
+				<cfif structKeyExists(server, "AWS_LAMBDA_FUNCTION_NAME") or 
+					  structKeyExists(cgi, "AWS_LAMBDA_FUNCTION_NAME") or
+					  structKeyExists(server, "AWS_EXECUTION_ENV") or
+					  structKeyExists(cgi, "AWS_EXECUTION_ENV") or
+					  structKeyExists(server, "LAMBDA_TASK_ROOT") or
+					  structKeyExists(cgi, "LAMBDA_TASK_ROOT") or
+					  structKeyExists(server, "_HANDLER") or
+					  structKeyExists(cgi, "_HANDLER")>
+					<cfset isLambda = true>
+				</cfif>
+				
+				<cfif isLambda>
 					<p><strong>Environment:</strong> AWS Lambda</p>
 				<cfelse>
-					<p><strong>Environment:</strong> Local/Non-AWS (metadata service not available)</p>
+					<p><strong>Environment:</strong> Local/Non-AWS</p>
 				</cfif>
+				
+				<!--- Debug: Show all environment variables --->
+				<p><strong>Debug Environment Variables:</strong></p>
+				<cfloop collection="#server#" item="key">
+					<cfif findNoCase("AWS", key) or findNoCase("LAMBDA", key) or findNoCase("_HANDLER", key)>
+						<p>#key#: #server[key]#</p>
+					</cfif>
+				</cfloop>
+				<cfloop collection="#cgi#" item="key">
+					<cfif findNoCase("AWS", key) or findNoCase("LAMBDA", key) or findNoCase("_HANDLER", key)>
+						<p>#key#: #cgi[key]#</p>
+					</cfif>
+				</cfloop>
 				
 				<!--- Try metadata service with IMDSv2 token first --->
 				<cfhttp url="http://169.254.169.254/latest/api/token" method="PUT" timeout="1" result="tokenResult">
