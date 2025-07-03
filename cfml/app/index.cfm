@@ -5,7 +5,7 @@
 	    <title>sdjustin.com</title>
 	</head>
 
-	<body bgcolor="white">
+	<body bgcolor="orange">
 		<h2 align=center>Coming Soon!</h1>
 		<div align=center>#now()#</div>
 
@@ -17,18 +17,21 @@
 			<hr>
 			<p><strong>Checking AWS Metadata...</strong></p>
 			<cftry>
-				<!--- Check if we're in AWS Lambda first --->
+				<!--- Check if we're in AWS Lambda using system environment --->
 				<cfset isLambda = false>
-				<cfif structKeyExists(server, "AWS_LAMBDA_FUNCTION_NAME") or 
-					  structKeyExists(cgi, "AWS_LAMBDA_FUNCTION_NAME") or
-					  structKeyExists(server, "AWS_EXECUTION_ENV") or
-					  structKeyExists(cgi, "AWS_EXECUTION_ENV") or
-					  structKeyExists(server, "LAMBDA_TASK_ROOT") or
-					  structKeyExists(cgi, "LAMBDA_TASK_ROOT") or
-					  structKeyExists(server, "_HANDLER") or
-					  structKeyExists(cgi, "_HANDLER")>
-					<cfset isLambda = true>
-				</cfif>
+				<cftry>
+					<cfset systemEnv = createObject("java", "java.lang.System").getenv()>
+					<cfif structKeyExists(systemEnv, "AWS_LAMBDA_FUNCTION_NAME") or 
+						  structKeyExists(systemEnv, "AWS_EXECUTION_ENV") or
+						  structKeyExists(systemEnv, "LAMBDA_TASK_ROOT") or
+						  structKeyExists(systemEnv, "_HANDLER") or
+						  structKeyExists(systemEnv, "AWS_LAMBDA_RUNTIME_API")>
+						<cfset isLambda = true>
+					</cfif>
+					<cfcatch>
+						<cfset isLambda = false>
+					</cfcatch>
+				</cftry>
 				
 				<cfif isLambda>
 					<p><strong>Environment:</strong> AWS Lambda</p>
@@ -36,44 +39,16 @@
 					<p><strong>Environment:</strong> Local/Non-AWS</p>
 				</cfif>
 				
-				<!--- Debug: Show system environment variables (most likely to have AWS vars) --->
-				<p><strong>System Environment Variables:</strong></p>
-				<cftry>
-					<cfset systemEnv = createObject("java", "java.lang.System").getenv()>
-					<cfloop collection="#systemEnv#" item="key">
-						<cftry>
-							<cfset value = systemEnv[key]>
-							<cfif isSimpleValue(value)>
-								<p>SYSTEM.#key#: #value#</p>
-							<cfelse>
-								<p>SYSTEM.#key#: [Complex Object]</p>
-							</cfif>
-							<cfcatch>
-								<p>SYSTEM.#key#: [Error reading value]</p>
-							</cfcatch>
-						</cftry>
-					</cfloop>
-					<cfcatch>
-						<p>System environment not accessible: #cfcatch.message#</p>
-					</cfcatch>
-				</cftry>
-				
-				<!--- Check specific Lambda environment variables --->
-				<p><strong>Lambda Environment Check:</strong></p>
-				<cfset lambdaVars = ["AWS_LAMBDA_FUNCTION_NAME", "AWS_EXECUTION_ENV", "LAMBDA_TASK_ROOT", "_HANDLER", "AWS_LAMBDA_RUNTIME_API"]>
-				<cfloop array="#lambdaVars#" index="varName">
+				<!--- Show Lambda function name if detected --->
+				<cfif isLambda>
 					<cftry>
-						<cfset sysValue = createObject("java", "java.lang.System").getenv(varName)>
-						<cfif isDefined("sysValue") and sysValue neq "">
-							<p>#varName#: #sysValue#</p>
-						<cfelse>
-							<p>#varName#: [Not Found]</p>
+						<cfset lambdaFunctionName = createObject("java", "java.lang.System").getenv("AWS_LAMBDA_FUNCTION_NAME")>
+						<cfif isDefined("lambdaFunctionName") and lambdaFunctionName neq "">
+							<p><strong>Function Name:</strong> #lambdaFunctionName#</p>
 						</cfif>
-						<cfcatch>
-							<p>#varName#: [Error: #cfcatch.message#]</p>
-						</cfcatch>
+						<cfcatch></cfcatch>
 					</cftry>
-				</cfloop>
+				</cfif>
 				
 				<!--- Try metadata service with IMDSv2 token first --->
 				<cfhttp url="http://169.254.169.254/latest/api/token" method="PUT" timeout="1" result="tokenResult">
