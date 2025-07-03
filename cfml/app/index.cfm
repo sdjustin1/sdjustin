@@ -5,7 +5,7 @@
 	    <title>sdjustin.com</title>
 	</head>
 
-	<body bgcolor="blue">
+	<body bgcolor="purple">
 		<h2 align=center>Coming Soon!</h1>
 		<div align=center>#now()#</div>
 
@@ -14,6 +14,7 @@
 		</div>
 		
 		<div align="center" style="margin-top: 20px;">
+			<hr>
 			<cftry>
 				<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/" timeout="5">
 				<cfif cfhttp.statusCode eq "200 OK">

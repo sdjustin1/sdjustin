@@ -10,4 +10,4 @@
 </cftry> 
 
 <cfdump var="#qTestQuery#">
-<cfdump var="#cfcatch.message#">
+<!--- <cfdump var="#cfcatch.message#"> --->
