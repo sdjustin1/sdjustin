@@ -5,7 +5,7 @@
 	    <title>sdjustin.com</title>
 	</head>
 
-	<body bgcolor="red">
+	<body bgcolor="white">
 		<h2 align=center>Coming Soon!</h1>
 		<div align=center>#now()#</div>
 
@@ -36,29 +36,44 @@
 					<p><strong>Environment:</strong> Local/Non-AWS</p>
 				</cfif>
 				
-				<!--- Debug: Show all environment variables --->
-				<p><strong>Debug All Environment Variables:</strong></p>
-				<cfset envCount = 0>
-				<cfloop collection="#server#" item="key">
-					<cfset envCount++>
-					<p>SERVER.#key#: #server[key]#</p>
-				</cfloop>
-				<cfloop collection="#cgi#" item="key">
-					<cfset envCount++>
-					<p>CGI.#key#: #cgi[key]#</p>
-				</cfloop>
-				<p><strong>Total Environment Variables:</strong> #envCount#</p>
-				
-				<!--- Also try system environment --->
+				<!--- Debug: Show system environment variables (most likely to have AWS vars) --->
+				<p><strong>System Environment Variables:</strong></p>
 				<cftry>
 					<cfset systemEnv = createObject("java", "java.lang.System").getenv()>
 					<cfloop collection="#systemEnv#" item="key">
-						<p>SYSTEM.#key#: #systemEnv[key]#</p>
+						<cftry>
+							<cfset value = systemEnv[key]>
+							<cfif isSimpleValue(value)>
+								<p>SYSTEM.#key#: #value#</p>
+							<cfelse>
+								<p>SYSTEM.#key#: [Complex Object]</p>
+							</cfif>
+							<cfcatch>
+								<p>SYSTEM.#key#: [Error reading value]</p>
+							</cfcatch>
+						</cftry>
 					</cfloop>
 					<cfcatch>
-						<p>System environment not accessible</p>
+						<p>System environment not accessible: #cfcatch.message#</p>
 					</cfcatch>
 				</cftry>
+				
+				<!--- Check specific Lambda environment variables --->
+				<p><strong>Lambda Environment Check:</strong></p>
+				<cfset lambdaVars = ["AWS_LAMBDA_FUNCTION_NAME", "AWS_EXECUTION_ENV", "LAMBDA_TASK_ROOT", "_HANDLER", "AWS_LAMBDA_RUNTIME_API"]>
+				<cfloop array="#lambdaVars#" index="varName">
+					<cftry>
+						<cfset sysValue = createObject("java", "java.lang.System").getenv(varName)>
+						<cfif isDefined("sysValue") and sysValue neq "">
+							<p>#varName#: #sysValue#</p>
+						<cfelse>
+							<p>#varName#: [Not Found]</p>
+						</cfif>
+						<cfcatch>
+							<p>#varName#: [Error: #cfcatch.message#]</p>
+						</cfcatch>
+					</cftry>
+				</cfloop>
 				
 				<!--- Try metadata service with IMDSv2 token first --->
 				<cfhttp url="http://169.254.169.254/latest/api/token" method="PUT" timeout="1" result="tokenResult">
