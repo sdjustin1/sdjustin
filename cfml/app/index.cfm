@@ -5,7 +5,7 @@
 	    <title>sdjustin.com</title>
 	</head>
 
-	<body bgcolor="brown">
+	<body bgcolor="white">
 		<h2 align=center>Coming Soon!</h1>
 		<div align=center>#now()#</div>
 
@@ -69,34 +69,51 @@
 						</cfcatch>
 					</cftry>
 					
-					<!--- Try to get VPC info using AWS SDK --->
+					<!--- Check for VPC-related environment variables --->
 					<p><strong>VPC Information:</strong></p>
 					<cftry>
-						<cfset region = sysEnv["AWS_REGION"]>
-						<cfset functionName = sysEnv["AWS_LAMBDA_FUNCTION_NAME"]>
-						
-						<!--- Use AWS SDK to get Lambda function configuration --->
-						<cfset lambdaClient = createObject("java", "com.amazonaws.services.lambda.AWSLambdaClientBuilder").standard().withRegion(region).build()>
-						<cfset getFunctionRequest = createObject("java", "com.amazonaws.services.lambda.model.GetFunctionRequest").withFunctionName(functionName)>
-						<cfset functionResult = lambdaClient.getFunction(getFunctionRequest)>
-						<cfset vpcConfig = functionResult.getConfiguration().getVpcConfig()>
-						
-						<cfif vpcConfig.getVpcId() neq "">
-							<p><strong>VPC ID:</strong> #vpcConfig.getVpcId()#</p>
-							<cfset subnetIds = vpcConfig.getSubnetIds()>
-							<cfif arrayLen(subnetIds) gt 0>
-								<p><strong>Subnet IDs:</strong> #arrayToList(subnetIds)#</p>
+						<cfset foundVpcInfo = false>
+						<cfloop collection="#sysEnv#" item="key">
+							<cfif findNoCase("VPC", key) or findNoCase("SUBNET", key) or findNoCase("SECURITY", key)>
+								<p><strong>#key#:</strong> #sysEnv[key]#</p>
+								<cfset foundVpcInfo = true>
 							</cfif>
-							<cfset securityGroupIds = vpcConfig.getSecurityGroupIds()>
-							<cfif arrayLen(securityGroupIds) gt 0>
-								<p><strong>Security Groups:</strong> #arrayToList(securityGroupIds)#</p>
-							</cfif>
-						<cfelse>
-							<p><strong>VPC:</strong> Not configured (using default VPC)</p>
+						</cfloop>
+						
+						<!--- Check application scope for VPC info --->
+						<cfif structKeyExists(application, "vpcId")>
+							<p><strong>VPC ID (from application):</strong> #application.vpcId#</p>
+							<cfset foundVpcInfo = true>
+						</cfif>
+						
+						<!--- Get local network interface info --->
+						<cftry>
+							<cfset networkInterfaces = createObject("java", "java.net.NetworkInterface").getNetworkInterfaces()>
+							<cfloop condition="#networkInterfaces.hasMoreElements()#">
+								<cfset ni = networkInterfaces.nextElement()>
+								<cfif ni.isUp() and not ni.isLoopback()>
+									<cfset addresses = ni.getInetAddresses()>
+									<cfloop condition="#addresses.hasMoreElements()#">
+										<cfset addr = addresses.nextElement()>
+										<cfif not addr.isLoopbackAddress() and not addr.isLinkLocalAddress()>
+											<p><strong>Local IP:</strong> #addr.getHostAddress()#</p>
+											<cfset foundVpcInfo = true>
+										</cfif>
+									</cfloop>
+								</cfif>
+							</cfloop>
+							<cfcatch>
+								<p>Network interface info not available</p>
+							</cfcatch>
+						</cftry>
+						
+						<cfif not foundVpcInfo>
+							<p><strong>VPC:</strong> AWS-managed (VPC ID not available without AWS API access)</p>
+							<p><strong>Note:</strong> Lambda functions run in AWS-managed infrastructure unless explicitly configured with VPC</p>
 						</cfif>
 						
 						<cfcatch>
-							<p><strong>VPC Info:</strong> Unable to retrieve (#cfcatch.message#)</p>
+							<p><strong>VPC Info:</strong> Unable to retrieve network information</p>
 						</cfcatch>
 					</cftry>
 					
