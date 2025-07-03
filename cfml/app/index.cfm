@@ -5,7 +5,7 @@
 	    <title>sdjustin.com</title>
 	</head>
 
-	<body bgcolor="orange">
+	<body bgcolor="white">
 		<h2 align=center>Coming Soon!</h1>
 		<div align=center>#now()#</div>
 
@@ -50,49 +50,70 @@
 					</cftry>
 				</cfif>
 				
-				<!--- Try metadata service with IMDSv2 token first --->
-				<cfhttp url="http://169.254.169.254/latest/api/token" method="PUT" timeout="1" result="tokenResult">
-					<cfhttpparam type="header" name="X-aws-ec2-metadata-token-ttl-seconds" value="21600">
-				</cfhttp>
-				
-				<cfif structKeyExists(tokenResult, "statusCode") and tokenResult.statusCode eq "200 OK">
-					<cfset token = tokenResult.fileContent>
-					<p><strong>IMDSv2 Token:</strong> Retrieved</p>
-					
-					<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/" timeout="2" result="httpResult">
-						<cfhttpparam type="header" name="X-aws-ec2-metadata-token" value="#token#">
-					</cfhttp>
+				<!--- Lambda functions don't have access to metadata service, show available AWS info instead --->
+				<cfif isLambda>
+					<p><strong>AWS Information (from environment variables):</strong></p>
+					<cftry>
+						<cfset sysEnv = createObject("java", "java.lang.System").getenv()>
+						<cfif structKeyExists(sysEnv, "AWS_REGION")>
+							<p><strong>Region:</strong> #sysEnv["AWS_REGION"]#</p>
+						</cfif>
+						<cfif structKeyExists(sysEnv, "AWS_LAMBDA_FUNCTION_MEMORY_SIZE")>
+							<p><strong>Memory Size:</strong> #sysEnv["AWS_LAMBDA_FUNCTION_MEMORY_SIZE"]# MB</p>
+						</cfif>
+						<cfif structKeyExists(sysEnv, "AWS_LAMBDA_LOG_GROUP_NAME")>
+							<p><strong>Log Group:</strong> #sysEnv["AWS_LAMBDA_LOG_GROUP_NAME"]#</p>
+						</cfif>
+						<cfcatch>
+							<p>Error reading environment variables</p>
+						</cfcatch>
+					</cftry>
+					<p><strong>Note:</strong> Metadata service is not available in Lambda functions (only in EC2 instances)</p>
 				<cfelse>
-					<!--- Fallback to IMDSv1 --->
-					<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/" timeout="2" result="httpResult">
-				</cfif>
-				
-				<p>HTTP Status: #httpResult.statusCode#</p>
-				<cfif httpResult.statusCode eq "200 OK">
-					<cfset macAddress = trim(httpResult.fileContent)>
-					<p><strong>MAC:</strong> #macAddress#</p>
+					<!--- Try metadata service for EC2 instances --->
+					<cfhttp url="http://169.254.169.254/latest/api/token" method="PUT" timeout="1" result="tokenResult">
+						<cfhttpparam type="header" name="X-aws-ec2-metadata-token-ttl-seconds" value="21600">
+					</cfhttp>
 					
-					<cfif isDefined("token")>
-						<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#/vpc-id" timeout="2" result="vpcResult">
-							<cfhttpparam type="header" name="X-aws-ec2-metadata-token" value="#token#">
-						</cfhttp>
-						<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#/subnet-id" timeout="2" result="subnetResult">
+					<cfif structKeyExists(tokenResult, "statusCode") and tokenResult.statusCode eq "200 OK">
+						<cfset token = tokenResult.fileContent>
+						<p><strong>IMDSv2 Token:</strong> Retrieved</p>
+						
+						<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/" timeout="2" result="httpResult">
 							<cfhttpparam type="header" name="X-aws-ec2-metadata-token" value="#token#">
 						</cfhttp>
 					<cfelse>
-						<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#/vpc-id" timeout="2" result="vpcResult">
-						<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#/subnet-id" timeout="2" result="subnetResult">
+						<!--- Fallback to IMDSv1 --->
+						<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/" timeout="2" result="httpResult">
 					</cfif>
 					
-					<cfif vpcResult.statusCode eq "200 OK">
-						<p><strong>VPC ID:</strong> #vpcResult.fileContent#</p>
+					<p>HTTP Status: #httpResult.statusCode#</p>
+					<cfif httpResult.statusCode eq "200 OK">
+						<cfset macAddress = trim(httpResult.fileContent)>
+						<p><strong>MAC:</strong> #macAddress#</p>
+						
+						<cfif isDefined("token")>
+							<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#/vpc-id" timeout="2" result="vpcResult">
+								<cfhttpparam type="header" name="X-aws-ec2-metadata-token" value="#token#">
+							</cfhttp>
+							<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#/subnet-id" timeout="2" result="subnetResult">
+								<cfhttpparam type="header" name="X-aws-ec2-metadata-token" value="#token#">
+							</cfhttp>
+						<cfelse>
+							<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#/vpc-id" timeout="2" result="vpcResult">
+							<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#/subnet-id" timeout="2" result="subnetResult">
+						</cfif>
+						
+						<cfif vpcResult.statusCode eq "200 OK">
+							<p><strong>VPC ID:</strong> #vpcResult.fileContent#</p>
+						</cfif>
+						<cfif subnetResult.statusCode eq "200 OK">
+							<p><strong>Subnet ID:</strong> #subnetResult.fileContent#</p>
+						</cfif>
+					<cfelse>
+						<p><strong>Status:</strong> #httpResult.statusCode#</p>
+						<p><strong>Reason:</strong> Metadata service unavailable (not running in AWS EC2)</p>
 					</cfif>
-					<cfif subnetResult.statusCode eq "200 OK">
-						<p><strong>Subnet ID:</strong> #subnetResult.fileContent#</p>
-					</cfif>
-				<cfelse>
-					<p><strong>Status:</strong> #httpResult.statusCode#</p>
-					<p><strong>Reason:</strong> Metadata service unavailable (not running in AWS EC2/Lambda)</p>
 				</cfif>
 				<cfcatch type="any">
 					<p><strong>Error:</strong> #cfcatch.message#</p>
