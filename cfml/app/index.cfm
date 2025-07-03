@@ -5,7 +5,7 @@
 	    <title>sdjustin.com</title>
 	</head>
 
-	<body bgcolor="white">
+	<body bgcolor="brown">
 		<h2 align=center>Coming Soon!</h1>
 		<div align=center>#now()#</div>
 
@@ -68,6 +68,38 @@
 							<p>Error reading environment variables</p>
 						</cfcatch>
 					</cftry>
+					
+					<!--- Try to get VPC info using AWS SDK --->
+					<p><strong>VPC Information:</strong></p>
+					<cftry>
+						<cfset region = sysEnv["AWS_REGION"]>
+						<cfset functionName = sysEnv["AWS_LAMBDA_FUNCTION_NAME"]>
+						
+						<!--- Use AWS SDK to get Lambda function configuration --->
+						<cfset lambdaClient = createObject("java", "com.amazonaws.services.lambda.AWSLambdaClientBuilder").standard().withRegion(region).build()>
+						<cfset getFunctionRequest = createObject("java", "com.amazonaws.services.lambda.model.GetFunctionRequest").withFunctionName(functionName)>
+						<cfset functionResult = lambdaClient.getFunction(getFunctionRequest)>
+						<cfset vpcConfig = functionResult.getConfiguration().getVpcConfig()>
+						
+						<cfif vpcConfig.getVpcId() neq "">
+							<p><strong>VPC ID:</strong> #vpcConfig.getVpcId()#</p>
+							<cfset subnetIds = vpcConfig.getSubnetIds()>
+							<cfif arrayLen(subnetIds) gt 0>
+								<p><strong>Subnet IDs:</strong> #arrayToList(subnetIds)#</p>
+							</cfif>
+							<cfset securityGroupIds = vpcConfig.getSecurityGroupIds()>
+							<cfif arrayLen(securityGroupIds) gt 0>
+								<p><strong>Security Groups:</strong> #arrayToList(securityGroupIds)#</p>
+							</cfif>
+						<cfelse>
+							<p><strong>VPC:</strong> Not configured (using default VPC)</p>
+						</cfif>
+						
+						<cfcatch>
+							<p><strong>VPC Info:</strong> Unable to retrieve (#cfcatch.message#)</p>
+						</cfcatch>
+					</cftry>
+					
 					<p><strong>Note:</strong> Metadata service is not available in Lambda functions (only in EC2 instances)</p>
 				<cfelse>
 					<!--- Try metadata service for EC2 instances --->
