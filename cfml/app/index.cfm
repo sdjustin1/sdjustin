@@ -5,7 +5,7 @@
 	    <title>sdjustin.com</title>
 	</head>
 
-	<body bgcolor="gray">
+	<body bgcolor="red">
 		<h2 align=center>Coming Soon!</h1>
 		<div align=center>#now()#</div>
 
@@ -37,17 +37,28 @@
 				</cfif>
 				
 				<!--- Debug: Show all environment variables --->
-				<p><strong>Debug Environment Variables:</strong></p>
+				<p><strong>Debug All Environment Variables:</strong></p>
+				<cfset envCount = 0>
 				<cfloop collection="#server#" item="key">
-					<cfif findNoCase("AWS", key) or findNoCase("LAMBDA", key) or findNoCase("_HANDLER", key)>
-						<p>#key#: #server[key]#</p>
-					</cfif>
+					<cfset envCount++>
+					<p>SERVER.#key#: #server[key]#</p>
 				</cfloop>
 				<cfloop collection="#cgi#" item="key">
-					<cfif findNoCase("AWS", key) or findNoCase("LAMBDA", key) or findNoCase("_HANDLER", key)>
-						<p>#key#: #cgi[key]#</p>
-					</cfif>
+					<cfset envCount++>
+					<p>CGI.#key#: #cgi[key]#</p>
 				</cfloop>
+				<p><strong>Total Environment Variables:</strong> #envCount#</p>
+				
+				<!--- Also try system environment --->
+				<cftry>
+					<cfset systemEnv = createObject("java", "java.lang.System").getenv()>
+					<cfloop collection="#systemEnv#" item="key">
+						<p>SYSTEM.#key#: #systemEnv[key]#</p>
+					</cfloop>
+					<cfcatch>
+						<p>System environment not accessible</p>
+					</cfcatch>
+				</cftry>
 				
 				<!--- Try metadata service with IMDSv2 token first --->
 				<cfhttp url="http://169.254.169.254/latest/api/token" method="PUT" timeout="1" result="tokenResult">
