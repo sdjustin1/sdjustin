@@ -5,7 +5,7 @@
 	    <title>sdjustin.com</title>
 	</head>
 
-	<body bgcolor="green">
+	<body bgcolor="yellow">
 		<h2 align=center>Coming Soon!</h1>
 		<div align=center>#now()#</div>
 
@@ -22,11 +22,11 @@
 				<cfif httpResult.statusCode eq "200 OK">
 					<cfset macAddress = trim(httpResult.fileContent)>
 					<p><strong>MAC:</strong> #macAddress#</p>
-					<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#vpc-id" timeout="2" result="vpcResult">
+					<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#/vpc-id" timeout="2" result="vpcResult">
 					<cfif vpcResult.statusCode eq "200 OK">
 						<p><strong>VPC ID:</strong> #vpcResult.fileContent#</p>
 					</cfif>
-					<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#subnet-id" timeout="2" result="subnetResult">
+					<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#/subnet-id" timeout="2" result="subnetResult">
 					<cfif subnetResult.statusCode eq "200 OK">
 						<p><strong>Subnet ID:</strong> #subnetResult.fileContent#</p>
 					</cfif>
