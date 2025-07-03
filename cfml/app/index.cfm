@@ -5,7 +5,7 @@
 	    <title>sdjustin.com</title>
 	</head>
 
-	<body bgcolor="purple">
+	<body bgcolor="green">
 		<h2 align=center>Coming Soon!</h1>
 		<div align=center>#now()#</div>
 
@@ -15,21 +15,28 @@
 		
 		<div align="center" style="margin-top: 20px;">
 			<hr>
+			<p><strong>Checking AWS Metadata...</strong></p>
 			<cftry>
-				<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/" timeout="5">
-				<cfif cfhttp.statusCode eq "200 OK">
-					<cfset macAddress = trim(cfhttp.fileContent)>
-					<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#vpc-id" timeout="5">
-					<cfif cfhttp.statusCode eq "200 OK">
-						<p><strong>VPC ID:</strong> #cfhttp.fileContent#</p>
+				<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/" timeout="2" result="httpResult">
+				<p>HTTP Status: #httpResult.statusCode#</p>
+				<cfif httpResult.statusCode eq "200 OK">
+					<cfset macAddress = trim(httpResult.fileContent)>
+					<p><strong>MAC:</strong> #macAddress#</p>
+					<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#vpc-id" timeout="2" result="vpcResult">
+					<cfif vpcResult.statusCode eq "200 OK">
+						<p><strong>VPC ID:</strong> #vpcResult.fileContent#</p>
 					</cfif>
-					<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#subnet-id" timeout="5">
-					<cfif cfhttp.statusCode eq "200 OK">
-						<p><strong>Subnet ID:</strong> #cfhttp.fileContent#</p>
+					<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#subnet-id" timeout="2" result="subnetResult">
+					<cfif subnetResult.statusCode eq "200 OK">
+						<p><strong>Subnet ID:</strong> #subnetResult.fileContent#</p>
 					</cfif>
+				<cfelse>
+					<p><strong>Status:</strong> #httpResult.statusCode#</p>
+					<p><strong>Environment:</strong> Not in AWS Lambda</p>
 				</cfif>
-				<cfcatch>
-					<p><em>VPC info not available (not running in AWS)</em></p>
+				<cfcatch type="any">
+					<p><strong>Error:</strong> #cfcatch.message#</p>
+					<p><strong>Environment:</strong> Local/Non-AWS</p>
 				</cfcatch>
 			</cftry>
 		</div>
