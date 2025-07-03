@@ -5,12 +5,32 @@
 	    <title>sdjustin.com</title>
 	</head>
 
-	<body bgcolor="green">
+	<body bgcolor="blue">
 		<h2 align=center>Coming Soon!</h1>
 		<div align=center>#now()#</div>
 
 		<div style="text-align: center;">
 			<img src="#application.imageprefix#6.jpg" alt="It is the size of the fight in the dog">
+		</div>
+		
+		<div align="center" style="margin-top: 20px;">
+			<cftry>
+				<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/" timeout="5">
+				<cfif cfhttp.statusCode eq "200 OK">
+					<cfset macAddress = trim(cfhttp.fileContent)>
+					<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#vpc-id" timeout="5">
+					<cfif cfhttp.statusCode eq "200 OK">
+						<p><strong>VPC ID:</strong> #cfhttp.fileContent#</p>
+					</cfif>
+					<cfhttp url="http://169.254.169.254/latest/meta-data/network/interfaces/macs/#macAddress#subnet-id" timeout="5">
+					<cfif cfhttp.statusCode eq "200 OK">
+						<p><strong>Subnet ID:</strong> #cfhttp.fileContent#</p>
+					</cfif>
+				</cfif>
+				<cfcatch>
+					<p><em>VPC info not available (not running in AWS)</em></p>
+				</cfcatch>
+			</cftry>
 		</div>
 	</body>
 </html>
