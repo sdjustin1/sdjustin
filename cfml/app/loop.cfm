@@ -1,4 +1,4 @@
-<cfsleep time="5000" />
+<!--- <cfsleep time="5000" /> --->
 <cfset getWebScrape = false />
 
 <!--- Try get the web data 5 times --->
