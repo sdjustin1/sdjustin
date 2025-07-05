@@ -1,6 +1,3 @@
-<!--- <cfsleep time="5000" /> --->
-<cfset getWebScrape = false />
-
 <!--- Log Lambda environment info for debugging --->
 <cfset lambdaStartTime = getTickCount() />
 <cfoutput>Lambda Environment Debug Info:<br></cfoutput>
@@ -11,7 +8,7 @@
 <cfoutput>---<br></cfoutput>
 
 <!--- Try get the web data 5 times --->
-<cfloop from="1" to="5" index="count">
+
     <cfset startTime = getTickCount() />
     <cfoutput>Request attempt #count# at #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")#<br></cfoutput>
     
@@ -84,7 +81,7 @@
             <cfsleep time="1000" />
         </cfif>
     </cfif>
-</cfloop>
+
 
 <!--- Final timing and API Gateway timeout detection --->
 <cfset lambdaEndTime = getTickCount() />
@@ -99,16 +96,6 @@
 
 <cfif totalLambdaTime GT 30000>
     <cfoutput><strong>CRITICAL: API Gateway timeout likely occurred! (#totalLambdaTime#ms)</strong><br></cfoutput>
-</cfif>
-
-<cfif getWebScrape>
-    <cfoutput>SUCCESS: Loop completed in #count# attempts<br></cfoutput>
-    <cfdump label="loop counter" var="#count#">
-    <cfdump var="#response#" />
-<cfelse>
-    <cfoutput>FAILURE: All #count# attempts failed<br></cfoutput>
-    <cfdump label="loop counter" var="#count#">
-    Abort with error!
 </cfif>
 
 <cfoutput>===== END TIMING REPORT =====<br></cfoutput>
