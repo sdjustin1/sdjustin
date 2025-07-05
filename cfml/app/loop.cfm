@@ -53,11 +53,7 @@
     </cfif>
     <cfoutput>---<br></cfoutput>
     
-    <cfif response.status_code eq "200">
-        <!--- If we get the web data break the loop --->
-        <cfset getWebScrape = true />
-        <cfbreak />      
-    <cfelse>
+    <cfif response.status_code neq "200">
         <!--- Some reason it failed, sleep for a second.... --->
         <cfset loopIterationTime = getTickCount() - startTime />
         <cfset cumulativeTime = getTickCount() - lambdaStartTime />
