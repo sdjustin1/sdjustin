@@ -21,7 +21,9 @@
     
     <!--- Test 2: Direct IP to isolate DNS --->
     <cfset ipStartTime = getTickCount() />
-    <cfhttp url="https://52.94.236.248" result="ipResponse" timeout="10" />
+    <cfhttp url="https://3.167.152.101" result="ipResponse" timeout="10">
+        <cfhttpparam type="header" name="Host" value="aws.amazon.com" />
+    </cfhttp>
     <cfset ipEndTime = getTickCount() />
     <cfset ipDuration = ipEndTime - ipStartTime />
     <cfoutput>Direct IP request completed in #ipDuration#ms<br></cfoutput>
