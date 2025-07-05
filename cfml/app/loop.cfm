@@ -2,9 +2,12 @@
 <cfset getWebScrape = false />
 
 <!--- Log Lambda environment info for debugging --->
+<cfset lambdaStartTime = getTickCount() />
 <cfoutput>Lambda Environment Debug Info:<br></cfoutput>
 <cfoutput>Server: #cgi.server_name#<br></cfoutput>
 <cfoutput>Request Time: #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")#<br></cfoutput>
+<cfoutput>Lambda Start: #lambdaStartTime#ms<br></cfoutput>
+<cfoutput>Request ID: #createUUID()#<br></cfoutput>
 <cfoutput>---<br></cfoutput>
 
 <!--- Try get the web data 5 times --->
@@ -28,12 +31,6 @@
     <cfset totalDuration = dnsEndTime - startTime />
     <cfoutput>DNS + Network completed in #totalDuration#ms<br></cfoutput>
         
-    <!--- Test 2b: Alternative approach - different domain with simpler SSL --->
-    <cfset altStartTime = getTickCount() />
-    <cfhttp url="https://httpbin.org/get" result="altResponse" timeout="10" />
-    <cfset altEndTime = getTickCount() />
-    <cfset altDuration = altEndTime - altStartTime />
-    <cfoutput>Alternative domain request completed in #altDuration#ms<br></cfoutput>
     
     <!--- Test 3: DNS-only lookup attempt --->
     <cfset lookupStartTime = getTickCount() />
@@ -46,12 +43,10 @@
     <cfoutput>Response analysis:<br></cfoutput>
     <cfoutput>- aws.amazon.com result: #response.status_code# (#response.status_text#)<br></cfoutput>
     <cfoutput>- Direct IP (HTTP) result: #ipResponse.status_code# (#ipResponse.status_text#)<br></cfoutput>
-    <cfoutput>- Alternative domain result: #altResponse.status_code# (#altResponse.status_text#)<br></cfoutput>
     <cfoutput>- HEAD request result: #headResponse.status_code# (#headResponse.status_text#)<br></cfoutput>
     <cfoutput>Performance comparison:<br></cfoutput>
     <cfoutput>- Full request (aws.amazon.com): #totalDuration#ms<br></cfoutput>
     <cfoutput>- Direct IP (HTTP): #ipDuration#ms<br></cfoutput>
-    <cfoutput>- Alternative domain: #altDuration#ms<br></cfoutput>
     <cfoutput>- HEAD only: #lookupDuration#ms<br></cfoutput>
     <cfif ipResponse.status_code GT 0>
         <cfoutput>- DNS penalty estimate: #totalDuration - ipDuration#ms<br></cfoutput>
@@ -67,21 +62,53 @@
         <cfbreak />      
     <cfelse>
         <!--- Some reason it failed, sleep for a second.... --->
+        <cfset loopIterationTime = getTickCount() - startTime />
+        <cfset cumulativeTime = getTickCount() - lambdaStartTime />
         <cfoutput>ERROR at #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")# - Status: #response.status_code# (#response.status_text#)<br></cfoutput>
         <cfoutput>Error Detail: #response.errordetail#<br></cfoutput>
         <cfoutput>File Content: #response.filecontent#<br></cfoutput>
+        <cfoutput>This iteration took: #loopIterationTime#ms<br></cfoutput>
+        <cfoutput>Cumulative time: #cumulativeTime#ms<br></cfoutput>
+        <cfif cumulativeTime GT 25000>
+            <cfoutput><strong>WARNING: Approaching API Gateway timeout! (#cumulativeTime#ms)</strong><br></cfoutput>
+        </cfif>
         <cfif structKeyExists(response, "responseheader")>
             <cfoutput>Response Headers: <cfdump var="#response.responseheader#" format="text"><br></cfoutput>
         </cfif>
         <cfdump var="#response#" />
-        <cfsleep time="1000" />
+        
+        <!--- Reduce sleep time if approaching timeout --->
+        <cfif cumulativeTime GT 25000>
+            <cfoutput>Skipping sleep due to timeout risk<br></cfoutput>
+        <cfelse>
+            <cfsleep time="1000" />
+        </cfif>
     </cfif>
 </cfloop>
 
+<!--- Final timing and API Gateway timeout detection --->
+<cfset lambdaEndTime = getTickCount() />
+<cfset totalLambdaTime = lambdaEndTime - lambdaStartTime />
+<cfoutput>===== FINAL TIMING REPORT =====<br></cfoutput>
+<cfoutput>Total Lambda Execution Time: #totalLambdaTime#ms<br></cfoutput>
+<cfoutput>Request End Time: #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")#<br></cfoutput>
+
+<cfif totalLambdaTime GT 25000>
+    <cfoutput><strong>WARNING: Approaching API Gateway 30s timeout! (#totalLambdaTime#ms)</strong><br></cfoutput>
+</cfif>
+
+<cfif totalLambdaTime GT 30000>
+    <cfoutput><strong>CRITICAL: API Gateway timeout likely occurred! (#totalLambdaTime#ms)</strong><br></cfoutput>
+</cfif>
+
 <cfif getWebScrape>
+    <cfoutput>SUCCESS: Loop completed in #count# attempts<br></cfoutput>
     <cfdump label="loop counter" var="#count#">
     <cfdump var="#response#" />
 <cfelse>
+    <cfoutput>FAILURE: All #count# attempts failed<br></cfoutput>
     <cfdump label="loop counter" var="#count#">
     Abort with error!
 </cfif>
+
+<cfoutput>===== END TIMING REPORT =====<br></cfoutput>
