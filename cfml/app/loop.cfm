@@ -10,7 +10,7 @@
 <!--- Try get the web data 5 times --->
 
     <cfset startTime = getTickCount() />
-    <cfoutput>Request attempt #count# at #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")#<br></cfoutput>
+    <cfoutput>Request attempt at #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")#<br></cfoutput>
     
     <!--- Test 2: Use HTTP instead of HTTPS for direct IP --->
     <cfset ipStartTime = getTickCount() />
