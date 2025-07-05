@@ -1,18 +1,35 @@
 <!--- <cfsleep time="5000" /> --->
 <cfset getWebScrape = false />
 
+<!--- Log Lambda environment info for debugging --->
+<cfoutput>Lambda Environment Debug Info:<br></cfoutput>
+<cfoutput>AWS_LAMBDA_FUNCTION_NAME: #getEnvironmentVariable("AWS_LAMBDA_FUNCTION_NAME", "NOT_SET")#<br></cfoutput>
+<cfoutput>AWS_REGION: #getEnvironmentVariable("AWS_REGION", "NOT_SET")#<br></cfoutput>
+<cfoutput>Server IP: #cgi.server_name#<br></cfoutput>
+<cfoutput>Request Time: #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")#<br></cfoutput>
+<cfoutput>---<br></cfoutput>
+
 <!--- Try get the web data 5 times --->
 <cfloop from="1" to="5" index="count">
-    <cfoutput>Request attempt #count#<br></cfoutput>
+    <cfset startTime = getTickCount() />
+    <cfoutput>Request attempt #count# at #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")#<br></cfoutput>
     <cfhttp url="https://aws.amazon.com" result="response" timeout="3" />
+    <cfset endTime = getTickCount() />
+    <cfset requestDuration = endTime - startTime />
+    <cfoutput>Request completed in #requestDuration#ms<br></cfoutput>
     <cfif response.status_code eq "200">
         <!--- If we get the web data break the loop --->
         <cfset getWebScrape = true />
         <cfbreak />      
     <cfelse>
         <!--- Some reason it failed, sleep for a second.... --->
+        <cfoutput>ERROR at #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")# - Status: #response.status_code# (#response.status_text#)<br></cfoutput>
+        <cfoutput>Error Detail: #response.errordetail#<br></cfoutput>
+        <cfoutput>File Content: #response.filecontent#<br></cfoutput>
+        <cfif structKeyExists(response, "responseheader")>
+            <cfoutput>Response Headers: <cfdump var="#response.responseheader#" format="text"><br></cfoutput>
+        </cfif>
         <cfdump var="#response#" />
-        <cfoutput>#response.status_code#</cfoutput><br />
         <cfsleep time="1000" />
     </cfif>
 </cfloop>
