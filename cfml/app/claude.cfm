@@ -5,7 +5,7 @@
 <cfoutput>---<br></cfoutput>
 
 <cfset startTime = getTickCount() />
-<cfoutput>Request attempt #count# at #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")#<br></cfoutput>
+<cfoutput>Request attempt at #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")#<br></cfoutput>
 
 <!--- Test 1: DNS resolution timing --->
 <cfset dnsStartTime = getTickCount() />
