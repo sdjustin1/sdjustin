@@ -3,9 +3,7 @@
 
 <!--- Log Lambda environment info for debugging --->
 <cfoutput>Lambda Environment Debug Info:<br></cfoutput>
-<cfoutput>AWS_LAMBDA_FUNCTION_NAME: #getEnvironmentVariable("AWS_LAMBDA_FUNCTION_NAME", "NOT_SET")#<br></cfoutput>
-<cfoutput>AWS_REGION: #getEnvironmentVariable("AWS_REGION", "NOT_SET")#<br></cfoutput>
-<cfoutput>Server IP: #cgi.server_name#<br></cfoutput>
+<cfoutput>Server: #cgi.server_name#<br></cfoutput>
 <cfoutput>Request Time: #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")#<br></cfoutput>
 <cfoutput>---<br></cfoutput>
 
