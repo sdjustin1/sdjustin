@@ -57,10 +57,10 @@
 <cfoutput>---<br></cfoutput>
 
 <hr>
-<cfdump label="#full tilt boogie#" var="#response#">
-<cfdump label="#ipresponse#" var="#ipResponse#">
-<cfdump label="#altResponse#" var="#altResponse#">
-<cfdump label="#headResponse#" var="#headResponse#">
+<cfdump label="full tilt boogie" var="#response#">
+<cfdump label="ipresponse" var="#ipResponse#">
+<cfdump label="altResponse" var="#altResponse#">
+<cfdump label="headResponse" var="#headResponse#">
 <hr>
 
 <!--- Some reason it failed, sleep for a second.... --->
