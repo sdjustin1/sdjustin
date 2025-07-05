@@ -12,13 +12,6 @@
     <cfset startTime = getTickCount() />
     <cfoutput>Request attempt #count# at #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")#<br></cfoutput>
     
-    <!--- Test 1: DNS resolution timing --->
-    <cfset dnsStartTime = getTickCount() />
-    <cfhttp url="https://aws.amazon.com" result="response" timeout="10" />
-    <cfset dnsEndTime = getTickCount() />
-    <cfset totalDuration = dnsEndTime - startTime />
-    <cfoutput>DNS + Network completed in #totalDuration#ms<br></cfoutput>
-    
     <!--- Test 2: Use HTTP instead of HTTPS for direct IP --->
     <cfset ipStartTime = getTickCount() />
     <cfhttp url="http://3.167.152.101" result="ipResponse" timeout="10">
@@ -27,7 +20,14 @@
     <cfset ipEndTime = getTickCount() />
     <cfset ipDuration = ipEndTime - ipStartTime />
     <cfoutput>Direct IP (HTTP) request completed in #ipDuration#ms<br></cfoutput>
-    
+
+    <!--- Test 1: DNS resolution timing --->
+    <cfset dnsStartTime = getTickCount() />
+    <cfhttp url="https://aws.amazon.com" result="response" timeout="10" />
+    <cfset dnsEndTime = getTickCount() />
+    <cfset totalDuration = dnsEndTime - startTime />
+    <cfoutput>DNS + Network completed in #totalDuration#ms<br></cfoutput>
+        
     <!--- Test 2b: Alternative approach - different domain with simpler SSL --->
     <cfset altStartTime = getTickCount() />
     <cfhttp url="https://httpbin.org/get" result="altResponse" timeout="10" />

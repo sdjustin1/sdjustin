@@ -70,4 +70,4 @@
 <cfif structKeyExists(response, "responseheader")>
     <cfoutput>Response Headers: <cfdump var="#response.responseheader#" format="text"><br></cfoutput>
 </cfif>
-<cfdump var="#response#" />
+
