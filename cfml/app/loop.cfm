@@ -11,7 +11,7 @@
 <cfloop from="1" to="5" index="count">
     <cfset startTime = getTickCount() />
     <cfoutput>Request attempt #count# at #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")#<br></cfoutput>
-    <cfhttp url="https://aws.amazon.com" result="response" timeout="3" />
+    <cfhttp url="https://aws.amazon.com" result="response" timeout="10" />
     <cfset endTime = getTickCount() />
     <cfset requestDuration = endTime - startTime />
     <cfoutput>Request completed in #requestDuration#ms<br></cfoutput>
