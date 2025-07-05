@@ -11,10 +11,40 @@
 <cfloop from="1" to="5" index="count">
     <cfset startTime = getTickCount() />
     <cfoutput>Request attempt #count# at #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")#<br></cfoutput>
+    
+    <!--- Test 1: DNS resolution timing --->
+    <cfset dnsStartTime = getTickCount() />
     <cfhttp url="https://aws.amazon.com" result="response" timeout="10" />
-    <cfset endTime = getTickCount() />
-    <cfset requestDuration = endTime - startTime />
-    <cfoutput>Request completed in #requestDuration#ms<br></cfoutput>
+    <cfset dnsEndTime = getTickCount() />
+    <cfset totalDuration = dnsEndTime - startTime />
+    <cfoutput>DNS + Network completed in #totalDuration#ms<br></cfoutput>
+    
+    <!--- Test 2: Direct IP to isolate DNS --->
+    <cfset ipStartTime = getTickCount() />
+    <cfhttp url="https://52.94.236.248" result="ipResponse" timeout="10" />
+    <cfset ipEndTime = getTickCount() />
+    <cfset ipDuration = ipEndTime - ipStartTime />
+    <cfoutput>Direct IP request completed in #ipDuration#ms<br></cfoutput>
+    
+    <!--- Test 3: DNS-only lookup attempt --->
+    <cfset lookupStartTime = getTickCount() />
+    <cfhttp url="https://aws.amazon.com" method="HEAD" result="headResponse" timeout="5" />
+    <cfset lookupEndTime = getTickCount() />
+    <cfset lookupDuration = lookupEndTime - lookupStartTime />
+    <cfoutput>HEAD request (DNS + minimal data) completed in #lookupDuration#ms<br></cfoutput>
+    
+    <!--- Test 4: Add connection details --->
+    <cfoutput>Response analysis:<br></cfoutput>
+    <cfoutput>- aws.amazon.com result: #response.status_code# (#response.status_text#)<br></cfoutput>
+    <cfoutput>- Direct IP result: #ipResponse.status_code# (#ipResponse.status_text#)<br></cfoutput>
+    <cfoutput>- HEAD request result: #headResponse.status_code# (#headResponse.status_text#)<br></cfoutput>
+    <cfoutput>Performance comparison:<br></cfoutput>
+    <cfoutput>- Full request: #totalDuration#ms<br></cfoutput>
+    <cfoutput>- Direct IP: #ipDuration#ms<br></cfoutput>
+    <cfoutput>- HEAD only: #lookupDuration#ms<br></cfoutput>
+    <cfoutput>- DNS penalty: #totalDuration - ipDuration#ms<br></cfoutput>
+    <cfoutput>---<br></cfoutput>
+    
     <cfif response.status_code eq "200">
         <!--- If we get the web data break the loop --->
         <cfset getWebScrape = true />
