@@ -31,12 +31,49 @@
     </cftry>
 </cffunction>
 
-<!--- Temporarily only run HEAD test --->
+<!--- Try get the web data 5 times --->
 
     <cfset startTime = getTickCount() />
     <cfoutput>Request attempt at #dateTimeFormat(now(), "yyyy-mm-dd HH:nn:ss.l")#<br></cfoutput>
     
-    <!--- Test 3: HEAD request only --->
+    <!--- Test 2: Use HTTP instead of HTTPS for direct IP --->
+    <cfset ipStartTime = getTickCount() />
+    <cfhttp url="http://3.167.152.101" result="ipResponse" timeout="10">
+        <cfhttpparam type="header" name="Host" value="aws.amazon.com" />
+    </cfhttp>
+    <cfset ipEndTime = getTickCount() />
+    <cfset ipDuration = ipEndTime - ipStartTime />
+    <cfoutput>Direct IP (HTTP) request completed in #ipDuration#ms<br></cfoutput>
+    
+    <!--- Send CloudWatch metrics for Direct IP test --->
+    <cfset sendCloudWatchMetric("DirectIPRequestDuration", ipDuration, "Milliseconds") />
+    <cfif ipResponse.status_code eq 200>
+        <cfset sendCloudWatchMetric("DirectIPSuccess", 1) />
+    <cfelse>
+        <cfset sendCloudWatchMetric("DirectIPFailure", 1) />
+        <cfset sendCloudWatchMetric("DirectIPTimeout", 1) />
+    </cfif>
+
+    <!--- Test 1: DNS resolution timing --->
+    <cfset dnsStartTime = getTickCount() />
+    <cfhttp url="https://aws.amazon.com" result="response" timeout="10" />
+    <cfset dnsEndTime = getTickCount() />
+    <cfset totalDuration = dnsEndTime - startTime />
+    <cfoutput>DNS + Network completed in #totalDuration#ms<br></cfoutput>
+    
+    <!--- Send CloudWatch metrics for main request --->
+    <cfset sendCloudWatchMetric("MainRequestDuration", totalDuration, "Milliseconds") />
+    <cfif response.status_code eq 200>
+        <cfset sendCloudWatchMetric("MainRequestSuccess", 1) />
+    <cfelse>
+        <cfset sendCloudWatchMetric("MainRequestFailure", 1) />
+        <cfif response.status_code eq 408>
+            <cfset sendCloudWatchMetric("MainRequestTimeout", 1) />
+        </cfif>
+    </cfif>
+        
+    
+    <!--- Test 3: DNS-only lookup attempt --->
     <cfset lookupStartTime = getTickCount() />
     <cfhttp url="https://aws.amazon.com" method="HEAD" result="headResponse" timeout="5" />
     <cfset lookupEndTime = getTickCount() />
@@ -54,16 +91,14 @@
         </cfif>
     </cfif>
     
-    <!--- Set dummy variables for the response analysis section --->
-    <cfset ipResponse = {status_code: 0} />
-    <cfset response = headResponse />
-    <cfset totalDuration = lookupDuration />
-    <cfset ipDuration = 0 />
-    
     <!--- Test 4: Add connection details --->
     <cfoutput>Response analysis:<br></cfoutput>
+    <cfoutput>- aws.amazon.com result: #response.status_code# (#structKeyExists(response, "status_text") ? response.status_text : "OK"#)<br></cfoutput>
+    <cfoutput>- Direct IP (HTTP) result: #ipResponse.status_code# (#structKeyExists(ipResponse, "status_text") ? ipResponse.status_text : "OK"#)<br></cfoutput>
     <cfoutput>- HEAD request result: #headResponse.status_code# (#structKeyExists(headResponse, "status_text") ? headResponse.status_text : "OK"#)<br></cfoutput>
     <cfoutput>Performance comparison:<br></cfoutput>
+    <cfoutput>- Full request (aws.amazon.com): #totalDuration#ms<br></cfoutput>
+    <cfoutput>- Direct IP (HTTP): #ipDuration#ms<br></cfoutput>
     <cfoutput>- HEAD only: #lookupDuration#ms<br></cfoutput>
     <cfif ipResponse.status_code GT 0>
         <cfoutput>- DNS penalty estimate: #totalDuration - ipDuration#ms<br></cfoutput>
