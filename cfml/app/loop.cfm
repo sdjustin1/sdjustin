@@ -62,12 +62,8 @@
     
     <!--- Test 4: Add connection details --->
     <cfoutput>Response analysis:<br></cfoutput>
-    <cfoutput>- aws.amazon.com result: #response.status_code# (#response.status_text#)<br></cfoutput>
-    <cfoutput>- Direct IP (HTTP) result: #ipResponse.status_code# (#ipResponse.status_text#)<br></cfoutput>
-    <cfoutput>- HEAD request result: #headResponse.status_code# (#headResponse.status_text#)<br></cfoutput>
+    <cfoutput>- HEAD request result: #headResponse.status_code# (#structKeyExists(headResponse, "status_text") ? headResponse.status_text : "OK"#)<br></cfoutput>
     <cfoutput>Performance comparison:<br></cfoutput>
-    <cfoutput>- Full request (aws.amazon.com): #totalDuration#ms<br></cfoutput>
-    <cfoutput>- Direct IP (HTTP): #ipDuration#ms<br></cfoutput>
     <cfoutput>- HEAD only: #lookupDuration#ms<br></cfoutput>
     <cfif ipResponse.status_code GT 0>
         <cfoutput>- DNS penalty estimate: #totalDuration - ipDuration#ms<br></cfoutput>
