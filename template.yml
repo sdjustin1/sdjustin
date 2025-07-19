@@ -24,15 +24,15 @@ Resources:
         Variables:
           FELIX_CACHE_BUFSIZE: 16384
           LUCEE_EXTENSIONS: 'B737ABC4-D43F-4D91-8E8E973E37C40D1B;name=cfimage;path=/var/task/extensions/image-extension-2.0.0.29.lex'
-          DB_USERNAME: '{{resolve:ssm:/cfml/databaseusername:1}}'
-          DB_PASSWORD: '{{resolve:ssm:/cfml/databasepassword:1}}'
-          DB_CONNECTION_STRING: '{{resolve:ssm:/cfml/databaseconnectionstring:1}}'             
+          DB_USERNAME: '{{resolve:ssm:/cfml/873_databaseusername:1}}'
+          DB_PASSWORD: '{{resolve:ssm:/cfml/873_databasepassword:1}}'
+          DB_CONNECTION_STRING: '{{resolve:ssm:/cfml/873_databaseconnectionstring:1}}'             
       VpcConfig:
         SecurityGroupIds: 
-          - '{{resolve:ssm:/cfml/1f4_securitygroupid:2}}'
+          - '{{resolve:ssm:/cfml/873_securitygroupid:1}}'
         SubnetIds: 
-          - '{{resolve:ssm:/cfml/1f4_subnetid1:2}}'
-          - '{{resolve:ssm:/cfml/1f4_subnetid2:2}}'
+          - '{{resolve:ssm:/cfml/873_subnetid1:1}}'
+          - '{{resolve:ssm:/cfml/873_subnetid2:1}}'
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
