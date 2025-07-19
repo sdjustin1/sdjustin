@@ -31,8 +31,8 @@ Resources:
         SecurityGroupIds: 
           - '{{resolve:ssm:/cfml/873_securitygroupid:1}}'
         SubnetIds: 
-          - '{{resolve:ssm:/cfml/873_subnetid1:1}}'
-          - '{{resolve:ssm:/cfml/873_subnetid2:1}}'
+          - '{{resolve:ssm:/cfml/873_subnetid1:2}}'
+          - '{{resolve:ssm:/cfml/873_subnetid2:2}}'
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
