@@ -11,13 +11,13 @@
         <cfset application.resultsArray = arrayNew(1)>
         <cfreturn true>
     </cffunction>   
-<!--- 
+
     <cffunction name="onRequest" access="public" returntype="void" hint="I handle the request">
         <cfargument name="path" type="string" required="true" />
         <cfsetting enablecfoutputonly="true" requesttimeout="180" showdebugoutput="true" />
         <cfset application.counter++ />
-        <!--- <cfinclude template="#listLast(arguments.path,'/')#" /> --->
-    </cffunction> --->
+        <cfinclude template="#listLast(arguments.path,'/')#" />
+    </cffunction>
     
     <cffunction name="onRequestStart" access="public" returntype="void">
         <cfif cgi.SERVER_NAME neq 'localhost'>
