@@ -16,7 +16,11 @@
         <cfargument name="path" type="string" required="true" />
         <cfsetting enablecfoutputonly="true" requesttimeout="180" showdebugoutput="true" />
         <cfset application.counter++ />
-        <cfinclude template="#listLast(arguments.path,'/')#" />
+        <cfset var templateName = listLast(arguments.path,'/') />
+        <cfif templateName eq "" or templateName eq "/">
+            <cfset templateName = "index.cfm" />
+        </cfif>
+        <cfinclude template="#templateName#" />
     </cffunction>
     
     <cffunction name="onRequestStart" access="public" returntype="void">
