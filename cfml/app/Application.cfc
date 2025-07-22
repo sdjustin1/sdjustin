@@ -23,6 +23,8 @@
         <cfset variables.templateName = listLast(arguments.path,'/') />
         <cfif variables.templateName eq "" or variables.templateName eq "/">
             <cfset variables.templateName = "index.cfm" />
+        <cfelseif not listLast(variables.templateName,'.') eq 'cfm'>
+            <cfset variables.templateName = variables.templateName & ".cfm" />
         </cfif>
         <cfinclude template="#variables.templateName#" />
     </cffunction>
