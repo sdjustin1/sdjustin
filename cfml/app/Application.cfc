@@ -12,6 +12,10 @@
         <cfreturn true>
     </cffunction>   
 
+    <!--- the onRequest method is important to address as LL has to handle naked requests  --->
+    <!--- that used to be handled by a web server: sdjustin.com/ --> sdjustin.com/index.cfm --->
+    <!--- I need to test if this works form mnjustin/rets/-v.cfm --->
+    <!--- the include at the bottom may need to move up into the IF block --->
     <cffunction name="onRequest" access="public" returntype="void" hint="I handle the request">
         <cfargument name="path" type="string" required="true" />
         <cfsetting enablecfoutputonly="true" requesttimeout="180" showdebugoutput="true" />
@@ -19,8 +23,8 @@
         <cfset variables.templateName = listLast(arguments.path,'/') />
         <cfif variables.templateName eq "" or variables.templateName eq "/">
             <cfset variables.templateName = "index.cfm" />
+            <cfinclude template="#variables.templateName#" />
         </cfif>
-        <cfinclude template="#variables.templateName#" />
     </cffunction>
     
     <cffunction name="onRequestStart" access="public" returntype="void">
