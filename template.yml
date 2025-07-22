@@ -15,6 +15,11 @@ Resources:
       Timeout: 300
       MemorySize: 3008
       Events:
+        GetRoot:
+          Type: Api
+          Properties:
+            Path: /
+            Method: any
         GetResource:
           Type: Api
           Properties:
