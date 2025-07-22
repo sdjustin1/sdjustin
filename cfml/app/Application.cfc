@@ -23,8 +23,8 @@
         <cfset variables.templateName = listLast(arguments.path,'/') />
         <cfif variables.templateName eq "" or variables.templateName eq "/">
             <cfset variables.templateName = "index.cfm" />
-            <cfinclude template="#variables.templateName#" />
         </cfif>
+        <cfinclude template="#variables.templateName#" />
     </cffunction>
     
     <cffunction name="onRequestStart" access="public" returntype="void">
