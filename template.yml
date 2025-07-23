@@ -25,8 +25,6 @@ Resources:
           Properties:
             Path: /{proxy+}
             Method: any
-            RequestParameters:
-              - method.request.path.proxy
       Environment:
         Variables:
           FELIX_CACHE_BUFSIZE: 16384

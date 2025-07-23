@@ -34,7 +34,7 @@
         <cfdump label="variables.templateName" var="#variables.templateName#">
         <cfinclude template="#variables.templateName#" /> --->
 
-
+<!--- 
         <cfargument name="path" type="string" required="true" />
         <cfsetting enablecfoutputonly="true" requesttimeout="180" showdebugoutput="true" />
         <cfset application.counter++ />
@@ -51,7 +51,19 @@
         </cfif>        
         <cfdump label="arguments.path" var="#arguments.path#">
         <cfdump label="variables.templateName2" var="#variables.templateName#">
-        <cfinclude template="#variables.templateName#" /> 
+        <cfinclude template="#variables.templateName#" />  --->
+
+
+        <cfargument name="path" type="string" required="true" />
+        <cfsetting enablecfoutputonly="true" requesttimeout="180" showdebugoutput="true" />
+        <cfset application.counter++ />
+        <cfset variables.templateName = listLast(arguments.path,'/') />
+        <cfif variables.templateName eq "" or variables.templateName eq "/">
+            <cfset variables.templateName = "index.cfm" />
+        <cfelseif not listLast(variables.templateName,'.') eq 'cfm'>
+            <cfset variables.templateName = variables.templateName & ".cfm" />
+        </cfif>
+        <cfinclude template="#variables.templateName#" />        
 
     </cffunction>
     
