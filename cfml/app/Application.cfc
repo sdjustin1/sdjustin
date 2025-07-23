@@ -17,7 +17,7 @@
     <!--- I need to test if this works form mnjustin/rets/-v.cfm --->
     <!--- the include at the bottom may need to move up into the IF block --->
     <cffunction name="onRequest" access="public" returntype="void" hint="I handle the request">
-        <cfargument name="path" type="string" required="true" />
+        <!--- <cfargument name="path" type="string" required="true" />
         <cfdump label="arguments.path" var="#arguments.path#">
         <cfsetting enablecfoutputonly="true" requesttimeout="180" showdebugoutput="true" />
         <cfset application.counter++ />
@@ -32,19 +32,20 @@
             <cfset variables.templateName = variables.templateName & ".cfm" />
         </cfif>
         <cfdump label="variables.templateName" var="#variables.templateName#">
-        <cfinclude template="#variables.templateName#" />
-<!--- 
+        <cfinclude template="#variables.templateName#" /> --->
+
+
         <cfargument name="path" type="string" required="true" />
         <cfsetting enablecfoutputonly="true" requesttimeout="180" showdebugoutput="true" />
         <cfset application.counter++ />
         <cfset variables.templateName = listLast(arguments.path,'/') />
         <cfif variables.templateName eq "" or variables.templateName eq "/">
-            <cfset variables.templateName = "index.cfm" />
+            <!--- <cfset variables.templateName = "index.cfm" /> --->
         <!--- the following two lines cause sdjustin.com/test to return results from sdjustin.com/test.cfm --->
         <cfelseif not listLast(variables.templateName,'.') eq 'cfm'>
             <cfset variables.templateName = variables.templateName & ".cfm" />
         </cfif>
-        <cfinclude template="#variables.templateName#" />         --->
+        <cfinclude template="#variables.templateName#" />        
     </cffunction>
     
     <cffunction name="onRequestStart" access="public" returntype="void">
