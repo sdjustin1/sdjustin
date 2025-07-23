@@ -40,7 +40,7 @@
         <cfset application.counter++ />
         <cfset variables.templateName = listLast(arguments.path,'/') />
         <cfif variables.templateName eq "" or variables.templateName eq "/">
-            <!--- <cfset variables.templateName = "index.cfm" /> --->
+            <cfset variables.templateName = "index.cfm" />
         <!--- the following two lines cause sdjustin.com/test to return results from sdjustin.com/test.cfm --->
         <cfelseif not listLast(variables.templateName,'.') eq 'cfm'>
             <cfset variables.templateName = variables.templateName & ".cfm" />
