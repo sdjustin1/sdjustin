@@ -6,6 +6,33 @@ Globals:
   Function:
     Timeout: 300   
 Resources:
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      DefinitionBody:
+        swagger: "2.0"
+        info:
+          title: !Ref AWS::StackName
+        paths:
+          /:
+            x-amazon-apigateway-any-method:
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CFMLSelectFunction.Arn}/invocations
+          /{proxy+}:
+            x-amazon-apigateway-any-method:
+              parameters:
+                - name: proxy
+                  in: path
+                  required: true
+                  type: string
+              x-amazon-apigateway-integration:
+                type: aws_proxy
+                httpMethod: POST
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CFMLSelectFunction.Arn}/invocations
+
   CFMLSelectFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -14,17 +41,6 @@ Resources:
       Runtime: java11
       Timeout: 300
       MemorySize: 3008
-      Events:
-        GetRoot:
-          Type: Api
-          Properties:
-            Path: /
-            Method: any
-        GetResource:
-          Type: Api
-          Properties:
-            Path: /{proxy+}
-            Method: any
       Environment:
         Variables:
           FELIX_CACHE_BUFSIZE: 16384
@@ -39,13 +55,21 @@ Resources:
           - '{{resolve:ssm:/cfml/873_subnetid1:2}}'
           - '{{resolve:ssm:/cfml/873_subnetid2:2}}'
 
+  CFMLSelectFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref CFMLSelectFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${MyApi}/*/*
+
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   CFMLSelectApi:
     Description: "API Gateway endpoint URL for Prod stage for CFML Select function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
   CFMLSelectFunction:
     Description: "CFML Lambda Function ARN"
     Value: !GetAtt CFMLSelectFunction.Arn
