@@ -39,7 +39,7 @@
         <cfsetting enablecfoutputonly="true" requesttimeout="180" showdebugoutput="true" />
         <cfset application.counter++ />
         <cfset variables.templateName = listLast(arguments.path,'/') />
-        <cfdump label="variables.templateName" var="#variables.templateName#">
+        <cfdump label="variables.templateName1" var="#variables.templateName#">
         <cfif variables.templateName eq "" or variables.templateName eq "/">
             <cfset variables.templateName = "index.cfm" />
         <!--- the following two lines cause sdjustin.com/test to return results from sdjustin.com/test.cfm --->
@@ -50,7 +50,7 @@
             <cfset variables.templateName = variables.templateName & ".cfm" />
         </cfif>        
         <cfdump label="arguments.path" var="#arguments.path#">
-        <cfdump label="variables.templateName" var="#variables.templateName#">
+        <cfdump label="variables.templateName2" var="#variables.templateName#">
         <cfinclude template="#variables.templateName#" /> 
 
     </cffunction>

@@ -20,6 +20,11 @@ Resources:
           Properties:
             Path: /
             Method: any
+        GetSinglePath:
+          Type: Api
+          Properties:
+            Path: /{path}
+            Method: any
         GetResource:
           Type: Api
           Properties:
