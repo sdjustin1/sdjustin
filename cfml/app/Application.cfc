@@ -31,6 +31,7 @@
         <cfif not find(".", listLast(variables.templateName,'/'))>
             <cfset variables.templateName = variables.templateName & ".cfm" />
         </cfif>
+        <cfdump label="variables.templateName" var="#variables.templateName#">
         <cfinclude template="#variables.templateName#" />
 <!--- 
         <cfargument name="path" type="string" required="true" />
