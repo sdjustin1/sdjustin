@@ -42,12 +42,15 @@
         <cfif variables.templateName eq "" or variables.templateName eq "/">
             <cfset variables.templateName = "index.cfm" />
         <!--- the following two lines cause sdjustin.com/test to return results from sdjustin.com/test.cfm --->
-        <cfelseif not find(".", listLast(variables.templateName,'/'))>
-            <cfset variables.templateName = variables.templateName & ".cfm" />
+        <!--- <cfelseif not find(".", listLast(variables.templateName,'/'))>
+            <cfset variables.templateName = variables.templateName & ".cfm" /> --->
         </cfif>
-        <cfinclude template="#variables.templateName#" /> 
+        <cfif not find(".", listLast(variables.templateName,'/'))>
+            <cfset variables.templateName = variables.templateName & ".cfm" />
+        </cfif>        
         <cfdump label="arguments.path" var="#arguments.path#">
         <cfdump label="variables.templateName" var="#variables.templateName#">
+        <cfinclude template="#variables.templateName#" /> 
 
     </cffunction>
     
