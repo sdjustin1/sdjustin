@@ -45,7 +45,10 @@
         <cfelseif not listLast(variables.templateName,'.') eq 'cfm'>
             <cfset variables.templateName = variables.templateName & ".cfm" />
         </cfif>
-        <cfinclude template="#variables.templateName#" />        
+        <cfinclude template="#variables.templateName#" /> 
+        <cfdump label="arguments.path" var="#arguments.path#">
+        <cfdump label="variables.templateName" var="#variables.templateName#">
+
     </cffunction>
     
     <cffunction name="onRequestStart" access="public" returntype="void">
