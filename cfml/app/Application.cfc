@@ -17,43 +17,10 @@
     <!--- I need to test if this works form mnjustin/rets/-v.cfm --->
     <!--- the include at the bottom may need to move up into the IF block --->
     <cffunction name="onRequest" access="public" returntype="void" hint="I handle the request">
-        <!--- <cfargument name="path" type="string" required="true" />
-        <cfdump label="arguments.path" var="#arguments.path#">
-        <cfsetting enablecfoutputonly="true" requesttimeout="180" showdebugoutput="true" />
-        <cfset application.counter++ />
-        <cfset variables.templateName = arguments.path />
-        <cfif variables.templateName eq "/" or variables.templateName eq "">
-            <cfset variables.templateName = "index.cfm" />
-        <cfelseif left(variables.templateName,1) eq "/">
-            <cfset variables.templateName = right(variables.templateName, len(variables.templateName)-1) />
-        </cfif>
-        <!--- Add .cfm extension if no extension present --->
-        <cfif not find(".", listLast(variables.templateName,'/'))>
-            <cfset variables.templateName = variables.templateName & ".cfm" />
-        </cfif>
-        <cfdump label="variables.templateName" var="#variables.templateName#">
-        <cfinclude template="#variables.templateName#" /> --->
-
-
         <cfargument name="path" type="string" required="true" />
         <cfsetting enablecfoutputonly="true" requesttimeout="180" showdebugoutput="true" />
         <cfset application.counter++ />
-        <cfset variables.templateName = listLast(arguments.path,'/') />
-        <cfdump label="variables.templateName1" var="#variables.templateName#">
-        <cfif variables.templateName eq "" or variables.templateName eq "/">
-            <cfset variables.templateName = "index.cfm" />
-        <!--- the following two lines cause sdjustin.com/test to return results from sdjustin.com/test.cfm --->
-        <!--- <cfelseif not find(".", listLast(variables.templateName,'/'))>
-            <cfset variables.templateName = variables.templateName & ".cfm" /> --->
-        </cfif>
-        <cfif not find(".", listLast(variables.templateName,'/'))>
-            <cfset variables.templateName = variables.templateName & ".cfm" />
-        </cfif>        
-        <cfdump label="arguments.path" var="#arguments.path#">
-        <cfdump label="variables.templateName2" var="#variables.templateName#">
-        <cfinclude template="#variables.templateName#" /> 
-        
-
+        <cfinclude template="#listLast(arguments.path,'/')#" />
     </cffunction>
     
     <cffunction name="onRequestStart" access="public" returntype="void">
