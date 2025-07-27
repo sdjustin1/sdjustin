@@ -6,33 +6,6 @@ Globals:
   Function:
     Timeout: 300   
 Resources:
-  MyApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: Prod
-      DefinitionBody:
-        swagger: "2.0"
-        info:
-          title: !Ref AWS::StackName
-        paths:
-          /:
-            x-amazon-apigateway-any-method:
-              x-amazon-apigateway-integration:
-                type: aws_proxy
-                httpMethod: POST
-                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CFMLSelectFunction.Arn}/invocations
-          /{proxy+}:
-            x-amazon-apigateway-any-method:
-              parameters:
-                - name: proxy
-                  in: path
-                  required: true
-                  type: string
-              x-amazon-apigateway-integration:
-                type: aws_proxy
-                httpMethod: POST
-                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CFMLSelectFunction.Arn}/invocations
-
   CFMLSelectFunction:
     Type: AWS::Serverless::Function
     Properties:
