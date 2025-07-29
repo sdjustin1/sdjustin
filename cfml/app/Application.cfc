@@ -20,7 +20,7 @@
         <cfargument name="path" type="string" required="true" />
         <cfinclude template="#listLast(arguments.path,'/')#" />
         <cfdump label="arguments.path" var="#arguments.path#">
-        <cfdump label="variables.templateName" var="#variables.templateName#">
+        <!--- <cfdump label="variables.templateName" var="#variables.templateName#"> --->
         <cfdump label="url" var="#url#">
 
 
