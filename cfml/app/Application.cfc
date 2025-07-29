@@ -25,6 +25,9 @@
         <cfelse> 
             <cfset variables.templateName = cgi.script_name />
         </cfif>
+        <cfif not find(".", variables.templateName)>
+            <cfset variables.templateName = variables.templateName & ".cfm" />
+        </cfif>        
         <cfinclude template="#variables.templateName#" />
         <cfdump label="arguments.path" var="#arguments.path#">
         <cfdump label="cgi.path_info" var="#cgi.path_info#">
