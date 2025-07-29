@@ -19,6 +19,13 @@
     <cffunction name="onRequest" access="public" returntype="void" hint="I handle the request">
         <cfargument name="path" type="string" required="true" />
         <cfinclude template="#listLast(arguments.path,'/')#" />
+        <cfdump label="arguments.path" var="#arguments.path#">
+        <cfdump label="variables.templateName" var="#variables.templateName#">
+        <cfdump label="url" var="#url#">
+
+
+
+
     </cffunction>
     
     <cffunction name="onRequestStart" access="public" returntype="void">
