@@ -21,8 +21,8 @@
         <cfargument name="path" type="string" required="true" />
         <cfdump var="#arguments.path#">
         <!--- <cfabort>  --->
-        <!--- <cfset variables.root = listLast(arguments.path,'/') />     --->
-        <cfif cgi.path_info eq "" or cgi.path_info eq "/">
+        <cfset variables.root = listLast(arguments.path,'/') />    
+        <cfif variables.root eq "" or variables.root eq "/">
             <cfset variables.templateName = "index.cfm" />
         <cfelse> 
             <cfset variables.templateName = cgi.path_info />
