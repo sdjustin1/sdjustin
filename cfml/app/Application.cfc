@@ -20,10 +20,10 @@
     <cffunction name="onRequest" access="public" returntype="void" hint="I handle the request">
         <cfargument name="path" type="string" required="true" /> 
         <!--- <cfset variables.root = listLast(arguments.path,'/') />     --->
-        <cfif cgi.script_name eq "" or cgi.script_name eq "/">
+        <cfif cgi.path_info eq "" or cgi.path_info eq "/">
             <cfset variables.templateName = "index.cfm" />
         <cfelse> 
-            <cfset variables.templateName = cgi.script_name />
+            <cfset variables.templateName = cgi.path_info />
         </cfif>
         <cfif not find(".", variables.templateName)>
             <cfset variables.templateName = variables.templateName & ".cfm" />
