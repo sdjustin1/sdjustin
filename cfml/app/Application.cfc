@@ -21,16 +21,17 @@
         <cfargument name="path" type="string" required="true" />
         <cfdump var="#arguments.path#">
         <!--- <cfabort>  --->
-        <cfif cgi.path_info eq "" or cgi.path_info eq "/">
+        <!--- <cfif cgi.path_info eq "" or cgi.path_info eq "/">
             <cfset variables.templateName = "index.cfm" />
         <cfelse> 
             <cfset variables.templateName = cgi.path_info />
-        </cfif>
+        </cfif> --->
+        <cfset variables.templateName = cgi.path_info />
         <cfif not find(".", variables.templateName)>
             <cfset variables.templateName = variables.templateName & ".cfm" />
         </cfif>        
         <cfinclude template="#variables.templateName#" />
-        
+
         <cfdump label="arguments.path" var="#arguments.path#">
         <cfdump label="cgi.path_info" var="#cgi.path_info#">
         <cfdump label="cgi.script_name" var="#cgi.script_name#">
