@@ -18,14 +18,17 @@
     <!--- the include at the bottom may need to move up into the IF block --->
     <!--- <cfinclude template="#listLast(arguments.path,'/')#" /> doesn't work with folders --->
     <cffunction name="onRequest" access="public" returntype="void" hint="I handle the request">
-        <cfif cgi.script_name eq "" or cgi.script_name eq "/">
+        <cfargument name="path" type="string" required="true" />     
+        <cfif arguments.path eq "" or arguments.path eq "/">
             <cfset variables.templateName = "index.cfm" />
         <cfelse> 
             <cfset variables.templateName = cgi.script_name />
         </cfif>
         <cfinclude template="#variables.templateName#" />
         <cfdump label="variables.templateName" var="#variables.templateName#">
-        <cfdump label="cgi" var="#cgi#">
+        <cfdump label="cgi.path_info" var="#cgi.path_info#">
+        <cfdump label="cgi.script_name" var="#cgi.script_name#">
+        <cfdump label="arguments.path" var="#arguments.path#">
 
 
 
