@@ -20,6 +20,11 @@ Resources:
           Properties:
             Path: /{proxy+}
             Method: any
+        GetRoot:
+          Type: Api
+          Properties:
+            Path: /
+            Method: any
       Environment:
         Variables:
           FELIX_CACHE_BUFSIZE: 16384
