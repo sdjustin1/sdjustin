@@ -18,8 +18,6 @@
     <!--- the include at the bottom may need to move up into the IF block --->
     <cffunction name="onRequest" access="public" returntype="void" hint="I handle the request">
         <cfargument name="path" type="string" required="true" />
-        <cfsetting enablecfoutputonly="true" requesttimeout="180" showdebugoutput="true" />
-        <cfset application.counter++ />
         <cfinclude template="#listLast(arguments.path,'/')#" />
     </cffunction>
     
