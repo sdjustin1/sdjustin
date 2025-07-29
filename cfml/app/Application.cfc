@@ -22,6 +22,7 @@
         <cfdump label="arguments.path" var="#arguments.path#">
         <!--- <cfdump label="variables.templateName" var="#variables.templateName#"> --->
         <cfdump label="url" var="#url#">
+        <cfdump label="cgi" var="#cgi#">
 
 
 
