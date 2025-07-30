@@ -12,36 +12,24 @@
         <cfreturn true>
     </cffunction>   
 
-    <!--- the onRequest method is important to address as LL has to handle naked requests  --->
-    <!--- that used to be handled by a web server: sdjustin.com/ --> sdjustin.com/index.cfm --->
-    <!--- I need to test if this works form mnjustin/rets/-v.cfm --->
-    <!--- the include at the bottom may need to move up into the IF block --->
-    <!--- <cfinclude template="#listLast(arguments.path,'/')#" /> doesn't work with folders --->
+    <!--- the onRequest method addresses routing edge cases --->
     <cffunction name="onRequest" access="public" returntype="void" hint="I handle the request">
-        <cfargument name="path" type="string" required="true" />
-        <!--- <cfif cgi.path_info eq "" or cgi.path_info eq "/">
-            <cfset variables.templateName = "index.cfm" />
-        <cfelse> 
-            <cfset variables.templateName = cgi.path_info />
-        </cfif> --->
+        <!--- this works in combination with this from template.yml: --->
+        <!--- GetRoot:
+                Type: Api
+                Properties:
+                    Path: /
+                    Method: any --->
         <cfif cgi.path_info eq "" or cgi.path_info eq "/">
             <cfset variables.templateName = "index.cfm">
+        <!--- this handles SEO friendly URL's: /aboutus routes to /aboutus.cfm --->
         <cfelseif not find(".", cgi.path_info)>
             <cfset variables.templateName = cgi.path_info & ".cfm">
+        <!--- this is the majority of cases, just serve what was requested --->
         <cfelse>
             <cfset variables.templateName = cgi.path_info>
         </cfif>        
-        
-        <cfdump label="arguments.path" var="#arguments.path#">
-        <cfdump label="cgi.path_info" var="#cgi.path_info#">
-        <cfdump label="cgi.script_name" var="#cgi.script_name#">
-        <cfdump label="variables.templateName" var="#variables.templateName#">
-        <cfdump label="java" var="#getPageContext().getRequest().getRequestURL()#">
-        
         <cfinclude template="#variables.templateName#" />
-
-
-
     </cffunction>
     
     <cffunction name="onRequestStart" access="public" returntype="void">
