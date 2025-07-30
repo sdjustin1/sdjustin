@@ -12,6 +12,33 @@
         <cfreturn true>
     </cffunction>   
 
+    <cffunction name="onRequestStart" access="public" returntype="void">
+        <cfif cgi.server_name eq "sdjustin.com">
+            <cfheader statuscode="301" statustext="Moved Permanently">
+            <cfheader name="Location" value="https://www.sdjustin.com#cgi.path_info##cgi.query_string eq '' ? '' : '?' & cgi.query_string#">
+            <cfabort>
+        </cfif>
+                
+        <cfif cgi.SERVER_NAME neq 'localhost'>
+
+            <cfset this.datasources["pgjdbc"] = {
+                class = 'org.postgresql.Driver',
+                connectionString = 'jdbc:postgresql://' 
+                    & server.system.environment.DB_CONNECTION_STRING,
+
+                username = server.system.environment.DB_USERNAME,
+                password = server.system.environment.DB_PASSWORD
+            }>
+
+            <cfset this.defaultDatasource = "pgjdbc">
+
+            <cfset application.imageprefix = "https://sdjustintestbucket.s3.us-east-2.amazonaws.com/cmedia/images/">
+        <cfelse>
+            <cfinclude template="includes/jlocalsecrets.cfm">
+            <cfset application.imageprefix = "../../cmedia/images/">
+        </cfif>
+    </cffunction>  
+
     <!--- the onRequest method addresses routing edge cases --->
     <cffunction name="onRequest" access="public" returntype="void" hint="I handle the request">
         <!--- this works in combination with this from template.yml: --->
@@ -32,28 +59,6 @@
         <cfinclude template="#variables.templateName#" />
     </cffunction>
     
-    <cffunction name="onRequestStart" access="public" returntype="void">
-        <cfif cgi.SERVER_NAME neq 'localhost'>
-
-            <cfset this.datasources["pgjdbc"] = {
-                class = 'org.postgresql.Driver',
-                connectionString = 'jdbc:postgresql://' 
-                    & server.system.environment.DB_CONNECTION_STRING,
-
-                username = server.system.environment.DB_USERNAME,
-                password = server.system.environment.DB_PASSWORD
-            }>
-
-            <cfset this.defaultDatasource = "pgjdbc">
-
-            <cfset application.imageprefix = "https://sdjustintestbucket.s3.us-east-2.amazonaws.com/cmedia/images/">
-        <cfelse>
-            <cfinclude template="includes/jlocalsecrets.cfm">
-            <cfset application.imageprefix = "../../cmedia/images/">
-        </cfif>
-    </cffunction>       
-
-
     <cffunction name="getCounter" returntype="any">
         <cfreturn application.counter>
     </cffunction>
