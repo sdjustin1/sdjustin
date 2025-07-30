@@ -24,10 +24,10 @@
         <cfelse> 
             <cfset variables.templateName = cgi.path_info />
         </cfif> --->
-        <cfif not find(".", cgi.path_info)>
-            <cfset variables.templateName = cgi.path_info & ".cfm">
-        <cfelseif cgi.path_info eq "" or cgi.path_info eq "/">
+        <cfif cgi.path_info eq "" or cgi.path_info eq "/">
             <cfset variables.templateName = "index.cfm">
+        <cfelseif not find(".", cgi.path_info)>
+            <cfset variables.templateName = cgi.path_info & ".cfm">
         <cfelse>
             <cfset variables.templateName = cgi.path_info>
         </cfif>        
