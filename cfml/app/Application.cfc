@@ -17,6 +17,7 @@
         <cfif cgi.http_host eq "sdjustin.com">
             <cfheader statuscode="301" statustext="Moved Permanently">
             <cfheader name="Location" value="https://www.sdjustin.com#cgi.path_info##cgi.query_string eq '' ? '' : '?' & cgi.query_string#">
+            <cfdump label="dump" var="dump">
             <cfabort>
         </cfif>
                 
