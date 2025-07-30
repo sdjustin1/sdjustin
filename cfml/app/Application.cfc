@@ -25,7 +25,7 @@
             <cfset variables.templateName = cgi.path_info />
         </cfif> --->
         <cfif not find(".", cgi.path_info)>
-            <cfset variables.templateName = gi.path_info & ".cfm" />
+            <cfset variables.templateName = cgi.path_info & ".cfm" />
         <cfelse>
             <cfset variables.templateName = cgi.path_info />
         </cfif>        
