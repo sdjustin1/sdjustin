@@ -19,16 +19,15 @@
     <!--- <cfinclude template="#listLast(arguments.path,'/')#" /> doesn't work with folders --->
     <cffunction name="onRequest" access="public" returntype="void" hint="I handle the request">
         <cfargument name="path" type="string" required="true" />
-        <cfdump label="arguments.path" var="#arguments.path#">
-        <!--- <cfabort>  --->
         <!--- <cfif cgi.path_info eq "" or cgi.path_info eq "/">
             <cfset variables.templateName = "index.cfm" />
         <cfelse> 
             <cfset variables.templateName = cgi.path_info />
         </cfif> --->
-        <cfset variables.templateName = cgi.path_info />
-        <cfif not find(".", variables.templateName)>
-            <cfset variables.templateName = variables.templateName & ".cfm" />
+        <cfif not find(".", cgi.path_info)>
+            <cfset variables.templateName = gi.path_info & ".cfm" />
+        <cfelse>
+            <cfset variables.templateName = cgi.path_info />
         </cfif>        
         
         <cfdump label="arguments.path" var="#arguments.path#">
