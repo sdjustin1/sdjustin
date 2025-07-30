@@ -14,7 +14,7 @@
 
     <cffunction name="onRequestStart" access="public" returntype="void">
         <cfdump var="#cgi#">
-        <cfif cgi.http_host eq "sdjustin.com">
+        <cfif cgi.http_host eq "sdjustin.com" or cgi.remote_host eq "sdjustin.com">
             <cfheader statuscode="301" statustext="Moved Permanently">
             <cfheader name="Location" value="https://www.sdjustin.com#cgi.path_info##cgi.query_string eq '' ? '' : '?' & cgi.query_string#">
             <cfdump label="dump" var="dump">
