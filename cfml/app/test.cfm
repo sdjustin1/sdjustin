@@ -1,2 +1,1 @@
-<cfset local.myheaders = GetHttpRequestData()>
-<cfdump label="justin" var="#local.myheaders#">
+<h2 data-testid="pagetitle" align=center>test page</h1>

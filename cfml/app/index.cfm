@@ -6,7 +6,7 @@
 	</head>
 
 	<body bgcolor="yellow">
-		<h2 align=center>Coming Soon!</h1>
+		<h2 data-testid="pagetitle" align=center>Coming Soon!</h1>
 		<div align=center>#now()#</div>
 
 		<div style="text-align: center;">
