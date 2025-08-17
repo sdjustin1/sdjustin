@@ -8,6 +8,16 @@ describe('Page Title Test', () => {
       .should('have.text', 'Coming Soon!')
   })
 
+  // test db connectivity
+  it('should justin, paul and donald as rows', () => {
+    cy.visit('https://www.sdjustin.com/query.cfm')
+    cy.get('.luceeH0')
+      .should("exist")
+      .should('have.text', 'jqueryoutput')
+    cy.get(':nth-child(5) > .luceeN1')
+      .should("exist")
+      .should('have.text', 'donald')      
+  })  
 
   
 })
