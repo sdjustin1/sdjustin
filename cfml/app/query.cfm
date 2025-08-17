@@ -9,5 +9,5 @@
     </cfcatch>
 </cftry> 
 
-<cfdump var="#qTestQuery#">
+<cfdump label="jqueryoutput" var="#qTestQuery#">
 <!--- <cfdump var="#cfcatch.message#"> --->
