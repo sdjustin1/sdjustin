@@ -20,7 +20,7 @@ describe('Page Title Test', () => {
   })  
 
   // test cfhttp
-  it('should request deere.com and dump response', () => {
+  it('should request aws.amazon.com and dump response', () => {
     cy.visit('https://www.sdjustin.com/cfhttp.cfm')
     cy.get('.luceeH3')
       .should("exist")
