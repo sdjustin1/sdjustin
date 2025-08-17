@@ -3,10 +3,10 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   sdjustin2 - API Gateway with custom domain for HTTPS
 Parameters:
-  DomainName:
+  DomainName: www.sdjustin.com
     Type: String
     Description: The custom domain name for the API (e.g., api.yourdomain.com)
-  CertificateArn:
+  CertificateArn: arn:aws:acm:us-east-2:533267296255:certificate/fedfce93-f665-48dc-9321-889955ba05de
     Type: String
     Description: The ARN of the ACM certificate for the custom domain
 Globals:
