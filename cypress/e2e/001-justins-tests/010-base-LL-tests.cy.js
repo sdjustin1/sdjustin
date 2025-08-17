@@ -19,5 +19,15 @@ describe('Page Title Test', () => {
       .should('have.text', 'donald')      
   })  
 
-  
+  // test cfhttp
+  it('should request deere.com and dump response', () => {
+    cy.visit('https://www.sdjustin.com/cfhttp.cfm')
+    cy.get('.luceeH3')
+      .should("exist")
+      .should('have.text', 'jcfhttpdump')
+      cy.get('.luceeN3 > :nth-child(1) > :nth-child(1) > :nth-child(6) > .luceeN2 > table > tbody > tr > .luceeN1')
+      .should("exist")
+      .should('contain.text', '<title>Cloud Computing Services - Amazon Web Services (AWS)</title>')      
+  })    
+    
 })
