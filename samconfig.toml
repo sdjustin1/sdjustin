@@ -1,8 +1,8 @@
 version = 0.1
 [default.deploy.parameters]
-stack_name = "sdjustin2"
+stack_name = "sdjustin9"
 resolve_s3 = true
-s3_prefix = "sdjustin2"
+s3_prefix = "sdjustin9"
 region = "us-east-2"
 capabilities = "CAPABILITY_IAM"
 image_repositories = []
