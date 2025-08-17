@@ -6,6 +6,37 @@ Globals:
   Function:
     Timeout: 300   
 Resources:
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      DefinitionBody:
+        swagger: "2.0"
+        info:
+          title: "CFML API"
+        x-amazon-apigateway-policy:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: "Allow"
+              Principal: "*"
+              Action: "execute-api:Invoke"
+              Resource: "*"
+        paths:
+          /{proxy+}:
+            x-amazon-apigateway-any-method:
+              x-amazon-apigateway-integration:
+                httpMethod: "POST"
+                type: "aws_proxy"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CFMLSelectFunction.Arn}/invocations"
+                passthroughBehavior: "when_no_match"
+                responses:
+                  "301":
+                    statusCode: "301"
+                    responseParameters:
+                      method.response.header.Location: "'https://www.sdjustin.com' + context.path"
+        x-amazon-apigateway-binary-media-types:
+          - "*/*"
+
   CFMLSelectFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -20,11 +51,13 @@ Resources:
           Properties:
             Path: /{proxy+}
             Method: any
+            RestApiId: !Ref ApiGateway
         GetRoot:
           Type: Api
           Properties:
             Path: /
             Method: any
+            RestApiId: !Ref ApiGateway
       Environment:
         Variables:
           FELIX_CACHE_BUFSIZE: 16384

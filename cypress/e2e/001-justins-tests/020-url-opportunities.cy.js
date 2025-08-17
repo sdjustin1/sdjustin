@@ -33,19 +33,19 @@ describe('Page Title Test', () => {
   })
   
   // https://github.com/mnjustin/z/issues/250
-  // it('redirect http requests to https', () => {
-  //   cy.visit('http://sdjustin.com/index.cfm')
-  //   cy.get('[data-testid="pagetitle"]')
-  //   .should("exist")
-  //   .should('have.text', 'Coming Soon!')
-  // })
+  it('redirect http requests to https', () => {
+    cy.visit('http://sdjustin.com/index.cfm')
+    cy.get('[data-testid="pagetitle"]')
+    .should("exist")
+    .should('have.text', 'Coming Soon!')
+  })
 
   // https://github.com/mnjustin/z/issues/250
-  // it('redirect http requests to https', () => {
-  //   cy.visit('http://www.sdjustin.com/index.cfm')
-  //   cy.get('[data-testid="pagetitle"]')
-  //   .should("exist")
-  //   .should('have.text', 'Coming Soon!')
-  // })  
+  it('redirect http requests to https', () => {
+    cy.visit('http://www.sdjustin.com/index.cfm')
+    cy.get('[data-testid="pagetitle"]')
+    .should("exist")
+    .should('have.text', 'Coming Soon!')
+  })  
   
 })
