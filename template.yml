@@ -1,11 +1,52 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  sdjustin2
+  sdjustin2 - API Gateway with custom domain for HTTPS
+Parameters:
+  DomainName:
+    Type: String
+    Description: The custom domain name for the API (e.g., api.yourdomain.com)
+  CertificateArn:
+    Type: String
+    Description: The ARN of the ACM certificate for the custom domain
 Globals:
   Function:
     Timeout: 300   
 Resources:
+  # Explicitly define the API Gateway
+  CFMLSelectApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      EndpointConfiguration: REGIONAL
+      Domain:
+        DomainName: !Ref DomainName
+        CertificateArn: !Ref CertificateArn
+        Route53:
+          HostedZoneName: !Sub "${DomainName}." # e.g., yourdomain.com.
+        EndpointConfiguration: REGIONAL
+        SecurityPolicy: TLS_1_2
+      DefinitionBody:
+        swagger: "2.0"
+        info:
+          title: "CFMLSelectApi"
+        paths:
+          "/{proxy+}":
+            x-amazon-apigateway-any-method:
+              produces: ["application/json"]
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CFMLSelectFunction.Arn}/invocations"
+                httpMethod: "POST"
+                type: "aws_proxy"
+          "/":
+            x-amazon-apigateway-any-method:
+              produces: ["application/json"]
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CFMLSelectFunction.Arn}/invocations"
+                httpMethod: "POST"
+                type: "aws_proxy"
   CFMLSelectFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -18,11 +59,13 @@ Resources:
         GetResource:
           Type: Api
           Properties:
+            RestApiId: !Ref CFMLSelectApi
             Path: /{proxy+}
             Method: any
         GetRoot:
           Type: Api
           Properties:
+            RestApiId: !Ref CFMLSelectApi
             Path: /
             Method: any
       Environment:
@@ -38,17 +81,16 @@ Resources:
         SubnetIds: 
           - '{{resolve:ssm:/cfml/873_subnetid1:2}}'
           - '{{resolve:ssm:/cfml/873_subnetid2:2}}'
-
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   CFMLSelectApi:
-    Description: "API Gateway endpoint URL for Prod stage for CFML Select function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+    Description: "API Gateway endpoint URL for Prod stage"
+    Value: !Sub "https://${DomainName}/Prod/"
   CFMLSelectFunction:
     Description: "CFML Lambda Function ARN"
     Value: !GetAtt CFMLSelectFunction.Arn
   CFMLSelectFunctionIamRole:
     Description: "Implicit IAM Role created for CFML Select function"
     Value: !GetAtt CFMLSelectFunctionRole.Arn
+  CustomDomainName:
+    Description: "Custom domain name for the API"
+    Value: !Ref DomainName

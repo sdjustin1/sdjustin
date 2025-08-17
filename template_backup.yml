@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sdjustin2
+Globals:
+  Function:
+    Timeout: 300   
+Resources:
+  CFMLSelectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.foundeo.fuseless.StreamLambdaHandler
+      CodeUri: ./build/distributions/fuseless-template.zip
+      Runtime: java11
+      Timeout: 300
+      MemorySize: 3008
+      Events:
+        GetResource:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: any
+        GetRoot:
+          Type: Api
+          Properties:
+            Path: /
+            Method: any
+      Environment:
+        Variables:
+          FELIX_CACHE_BUFSIZE: 16384
+          LUCEE_EXTENSIONS: 'B737ABC4-D43F-4D91-8E8E973E37C40D1B;name=cfimage;path=/var/task/extensions/image-extension-2.0.0.29.lex'
+          DB_USERNAME: '{{resolve:ssm:/cfml/873_databaseusername:1}}'
+          DB_PASSWORD: '{{resolve:ssm:/cfml/873_databasepassword:1}}'
+          DB_CONNECTION_STRING: '{{resolve:ssm:/cfml/873_databaseconnectionstring:1}}'             
+      VpcConfig:
+        SecurityGroupIds: 
+          - '{{resolve:ssm:/cfml/873_securitygroupid:1}}'
+        SubnetIds: 
+          - '{{resolve:ssm:/cfml/873_subnetid1:2}}'
+          - '{{resolve:ssm:/cfml/873_subnetid2:2}}'
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  CFMLSelectApi:
+    Description: "API Gateway endpoint URL for Prod stage for CFML Select function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  CFMLSelectFunction:
+    Description: "CFML Lambda Function ARN"
+    Value: !GetAtt CFMLSelectFunction.Arn
+  CFMLSelectFunctionIamRole:
+    Description: "Implicit IAM Role created for CFML Select function"
+    Value: !GetAtt CFMLSelectFunctionRole.Arn
