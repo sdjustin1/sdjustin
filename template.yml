@@ -6,17 +6,6 @@ Globals:
   Function:
     Timeout: 300   
 Resources:
-  ApiGateway:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: Prod
-      Domain:
-        DomainName: sdjustin.com
-        CertificateArn: !Ref SSLCertificate
-        EndpointConfiguration: EDGE
-        Route53:
-          HostedZoneId: !Ref HostedZone
-
   CFMLSelectFunction:
     Type: AWS::Serverless::Function
     Properties:
