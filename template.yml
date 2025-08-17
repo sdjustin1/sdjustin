@@ -78,7 +78,7 @@ Outputs:
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   CFMLSelectApi:
     Description: "API Gateway endpoint URL for Prod stage for CFML Select function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+    Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
   CFMLSelectFunction:
     Description: "CFML Lambda Function ARN"
     Value: !GetAtt CFMLSelectFunction.Arn
