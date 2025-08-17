@@ -25,7 +25,7 @@ Resources:
         DomainName: !Ref DomainName
         CertificateArn: !Ref CertificateArn
         Route53:
-          HostedZoneName: !Sub "${DomainName}." # e.g., yourdomain.com.
+          HostedZoneName: sdjustin.com. # Root domain for Route 53 hosted zone
         EndpointConfiguration: REGIONAL
         SecurityPolicy: TLS_1_2
       DefinitionBody:
