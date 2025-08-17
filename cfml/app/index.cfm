@@ -5,7 +5,7 @@
 	    <title>sdjustin.com</title>
 	</head>
 
-	<body bgcolor="red">
+	<body bgcolor="pink">
 		<h2 data-testid="pagetitle" align=center>Coming Soon!</h1>
 		<div align=center>#now()#</div>
 
@@ -20,3 +20,7 @@
 <!--- <cfdump var="#application#">
 <cfdump var="#session#">
 <cfdump var="#cookie#"> --->
+
+<cfset headers = getHttpRequestData().headers>
+<cfdump label="cgi scope" var="#cgi#">
+<cfdump label="headers" var="#headers#">
